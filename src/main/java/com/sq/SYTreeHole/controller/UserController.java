@@ -44,7 +44,7 @@ public class UserController {
     @GetMapping("/code")
     public Result<String> code(String username) {
         String code = loginService.code(username);
-        return new Result<>(Constants.CODE_400, "验证码", code);
+        return new Result<>(Constants.CODE_200, "验证码", code);
     }
 
     @PostMapping("/resetPassword")
