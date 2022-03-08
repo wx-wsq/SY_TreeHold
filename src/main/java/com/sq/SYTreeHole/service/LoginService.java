@@ -8,9 +8,10 @@ public interface LoginService{
      * 登录
      * @param username 用户名
      * @param password 密码
+     * @param code 验证码
      * @return 返回User对象
      */
-    User login(String username, String password);
+    User login(String username, String password, String code);
 
     /**
      * 重置密码

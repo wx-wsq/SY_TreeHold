@@ -7,42 +7,41 @@ import com.sq.SYTreeHole.Utils.RedisUtils;
 import com.sq.SYTreeHole.Utils.SHA256Utils;
 import com.sq.SYTreeHole.dao.LoginMapper;
 import com.sq.SYTreeHole.entity.User;
+import com.sq.SYTreeHole.exception.LoginControllerException;
 import com.sq.SYTreeHole.service.LoginService;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.redis.connection.RedisStringCommands;
 import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 import java.util.Random;
 
 @Service
 public class LoginServiceImpl extends ServiceImpl<LoginMapper,User> implements LoginService {
 
-    /**
-     * 登录
-     * @param userName 用户名
-     * @param password 密码
-     * @return 返回User对象
-     */
-
-    public User login(String userName, String password){
+    public User login(String username, String password, String code){
+        if(Strings.isBlank(username)||Strings.isBlank(password)||Strings.isBlank(code))
+            throw new LoginControllerException("空参异常");
+        if(!code.equals(code(username)))
+            throw new LoginControllerException("验证码错误");
         password = SHA256Utils.encode(password);
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper
-                .eq("username",userName)
+                .eq("username",username)
                 .eq("password",password);
         return getOne(queryWrapper);
     }
 
     @Override
     public boolean resetPassword(String username, String newPassword, String code) {
-        if(code.equals(code(username))) {
+        if(Strings.isBlank(username)||Strings.isBlank(newPassword)||Strings.isBlank(code))
+            throw new LoginControllerException("空参异常");
+        if(code.equals(code(username)))
+            throw new LoginControllerException("验证码错误");
             newPassword = SHA256Utils.encode(newPassword);
             UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
             updateWrapper.eq("username", username).set("password", newPassword);
             return update(updateWrapper);
-        }else
-            return false;
     }
 
 
@@ -50,9 +49,9 @@ public class LoginServiceImpl extends ServiceImpl<LoginMapper,User> implements L
     public String code(String username) {
         StringBuilder sb =new StringBuilder();
         Random random= new Random();
-        for (int i = 0; i < 7; i++) {
+        byte[] code;
+        for (int i = 0; i < 7; i++)
             sb.append(random.nextInt(10));
-        }
         Boolean set = RedisUtils.getRedis()
                 .set("code".getBytes(StandardCharsets.UTF_8),
                         sb.toString().getBytes(StandardCharsets.UTF_8),
@@ -63,7 +62,9 @@ public class LoginServiceImpl extends ServiceImpl<LoginMapper,User> implements L
 
             return sb.toString();
         }
+        else if((code=RedisUtils.getRedis().get("code".getBytes(StandardCharsets.UTF_8)))!=null)
+            return new String(code,StandardCharsets.UTF_8);
         else
-            return new String(Objects.requireNonNull(RedisUtils.getRedis().get("code".getBytes(StandardCharsets.UTF_8))),StandardCharsets.UTF_8);
+            return "";
     }
 }

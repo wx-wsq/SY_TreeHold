@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class LoginAndRegisterException extends Exception{
 
     @ExceptionHandler(LoginControllerException.class)
-    @SuppressWarnings("all")
     public Result<?> exception(Exception ex){
         log.error("登录/注册发生错误...\n{}",String.valueOf(ex));
         return new Result<>(Constants.CODE_500,"服务器错误",ex.getMessage());

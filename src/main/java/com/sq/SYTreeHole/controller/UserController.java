@@ -25,8 +25,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public Result<User> login(String username, String password) {
-        User user = loginService.login(username, password);
+    public Result<User> login(String username, String password, String code) {
+        User user = loginService.login(username, password,code);
         if (Objects.nonNull(user))
             return new Result<>(Constants.CODE_200, "登录成功", user);
         else
@@ -34,9 +34,9 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public User register(User user) {
+    public User register(User user,String code) {
         if (Strings.isNotBlank(user.getUsername()) && registerService.register(user))
-            return loginService.login(user.getUsername(), user.getPassword());
+            return loginService.login(user.getUsername(), user.getPassword(),code);
         else
             throw new LoginControllerException("账户注册失败");
     }
@@ -49,12 +49,10 @@ public class UserController {
 
     @PostMapping("/resetPassword")
     public Result<String> resetPassword(String username, String newPassword, String code) {
-        if (Strings.isBlank(username) || Strings.isBlank(newPassword) || Strings.isBlank(code))
-            return new Result<>(Constants.CODE_400, "参数不能为空", null);
         boolean resetPassword = loginService.resetPassword(username, newPassword, code);
         if (resetPassword)
             return new Result<>(Constants.CODE_200, "修改成功", null);
         else
-            return new Result<>(Constants.CODE_400, "验证码错误", null);
+            return new Result<>(Constants.CODE_400, "服务器异常，可能不存在此用户", null);
     }
 }
