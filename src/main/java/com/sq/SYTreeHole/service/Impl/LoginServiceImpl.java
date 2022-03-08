@@ -40,7 +40,9 @@ public class LoginServiceImpl extends ServiceImpl<LoginMapper,User> implements L
             throw new LoginControllerException("验证码错误");
             newPassword = SHA256Utils.encode(newPassword);
             UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
-            updateWrapper.eq("username", username).set("password", newPassword);
+            updateWrapper
+                    .eq("username", username)
+                    .set("password", newPassword);
             return update(updateWrapper);
     }
 
