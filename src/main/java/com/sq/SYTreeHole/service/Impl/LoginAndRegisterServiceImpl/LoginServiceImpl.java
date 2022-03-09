@@ -9,11 +9,11 @@ import com.sq.SYTreeHole.dao.loginAndRegisterDao.LoginMapper;
 import com.sq.SYTreeHole.entity.User;
 import com.sq.SYTreeHole.exception.LoginControllerException;
 import com.sq.SYTreeHole.service.LoginAndRegisterService.LoginService;
+import org.apache.ibatis.ognl.ObjectElementsAccessor;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.redis.connection.RedisStringCommands;
 import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.stereotype.Service;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Random;
@@ -29,7 +29,15 @@ public class LoginServiceImpl extends ServiceImpl<LoginMapper, User> implements 
         queryWrapper
                 .eq("username", username)
                 .eq("password", password);
-        return getOne(queryWrapper);
+        User user = getOne(queryWrapper);
+        if(Objects.isNull(user)){
+            queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("username",username);
+            user = getOne(queryWrapper);
+            if(Objects.nonNull(user))
+                user.setId("0");
+        }
+        return user;
     }
 
     @Override
@@ -48,7 +56,7 @@ public class LoginServiceImpl extends ServiceImpl<LoginMapper, User> implements 
 
     @Override
     public boolean register(User user, String code) {
-        if (Objects.isNull(user) || Strings.isBlank(user.getUsername())||Strings.isBlank(user.getPassword())||Strings.isBlank(code))
+        if (Strings.isBlank(user.getUsername())||Strings.isBlank(user.getPassword())||Strings.isBlank(code))
             throw new LoginControllerException("空参异常");
         else if(code.equals(code(user.getUsername()))){
             throw new LoginControllerException("验证码错误");
@@ -78,6 +86,6 @@ public class LoginServiceImpl extends ServiceImpl<LoginMapper, User> implements 
         } else if ((code = RedisUtils.getRedis().get("code".getBytes(StandardCharsets.UTF_8))) != null)
             return new String(code, StandardCharsets.UTF_8);
         else
-            return "";
+            throw new LoginControllerException("验证码获取失败....redis错误");
     }
 }

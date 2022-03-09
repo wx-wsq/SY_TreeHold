@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Slf4j
 @ResponseBody
 @ControllerAdvice
-public class LoginAndRegisterException extends Exception{
+public class ExceptionAdviceHandler extends Exception{
 
-    @ExceptionHandler(LoginControllerException.class)
-    public Result<?> exception(Exception ex){
-        log.error("登录/注册发生错误...\n{}",String.valueOf(ex));
+    @ExceptionHandler(RuntimeException.class)
+    public Result<?> LoginException(Exception ex){
+        log.error("服务器错误...\n{}",String.valueOf(ex));
         return new Result<>(Constants.CODE_500,"服务器错误",ex.getMessage());
     }
 }

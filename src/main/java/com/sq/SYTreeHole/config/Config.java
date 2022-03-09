@@ -39,7 +39,7 @@ public class Config {
     public CacheManager cacheManager(JedisConnectionFactory redisConnectionFactory) {
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(RedisCacheConfiguration.defaultCacheConfig()
-                        .entryTtl(Duration.ofSeconds(60))
+                        .entryTtl(Duration.ofHours(24))
                         .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(RedisSerializer.json())))
                 // 启用 Redis 缓存，使缓存放置/驱逐操作与正在进行的 Spring 管理的事务同步。
                 .transactionAware()

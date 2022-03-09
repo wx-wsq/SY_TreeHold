@@ -1,11 +1,10 @@
-package com.sq.SYTreeHole.controller.LoginAndRegisterController;
+package com.sq.SYTreeHole.controller;
 
 import com.sq.SYTreeHole.common.Constants;
 import com.sq.SYTreeHole.common.Result;
 import com.sq.SYTreeHole.entity.User;
 import com.sq.SYTreeHole.exception.LoginControllerException;
 import com.sq.SYTreeHole.service.LoginAndRegisterService.LoginService;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,15 +23,17 @@ public class UserController {
     @PostMapping("/login")
     public Result<User> login(String username, String password) {
         User user = loginService.login(username, password);
-        if (Objects.nonNull(user))
-            return new Result<>(Constants.CODE_200, "登录成功", user);
+        if (Objects.isNull(user))
+            return new Result<>(Constants.CODE_400, "此用户尚未注册", null);
+        else if(user.getId().equals("0"))
+            return new Result<>(Constants.CODE_400, "用户名或密码错误", null);
         else
-            return new Result<>(Constants.CODE_401, "第一次使用，请注册", null);
+            return new Result<>(Constants.CODE_200,"登陆成功",null);
     }
 
     @PostMapping("/register")
     public User register(User user, String code) {
-        if (Strings.isNotBlank(user.getUsername()) && loginService.register(user, code))
+        if (Objects.nonNull(user) && loginService.register(user, code))
             return loginService.login(user.getUsername(), user.getPassword());
         else
             throw new LoginControllerException("账户注册失败");
