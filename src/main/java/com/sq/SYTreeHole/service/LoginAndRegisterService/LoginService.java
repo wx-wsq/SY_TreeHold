@@ -5,12 +5,15 @@ import com.sq.SYTreeHole.entity.User;
 public interface LoginService{
 
     /**
-     * 登录
+     * 密码登录
      * @param username 用户名
      * @param password 密码
      * @return 返回User对象
      */
-    User login(String username, String password);
+    User loginForPass(String username, String password);
+
+
+    User loginForCode(String username, String code);
 
     /**
      * 重置密码

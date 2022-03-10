@@ -20,9 +20,9 @@ public class UserController {
         this.loginService = loginService;
     }
 
-    @PostMapping("/login")
-    public Result<User> login(String username, String password) {
-        User user = loginService.login(username, password);
+    @PostMapping("/loginForPass")
+    public Result<User> loginForPass(String username, String password) {
+        User user = loginService.loginForPass(username, password);
         if (Objects.isNull(user))
             return new Result<>(Constants.CODE_400, "此用户尚未注册", null);
         else if(user.getId().equals("0"))
@@ -31,10 +31,21 @@ public class UserController {
             return new Result<>(Constants.CODE_200,"登陆成功",null);
     }
 
+    @GetMapping("/loginForCode")
+    public Result<?> loginForCode(String username, String code){
+        User user = loginService.loginForCode(username, code);
+        if (Objects.isNull(user))
+            return new Result<>(Constants.CODE_400, "此用户尚未注册", null);
+        else if(user.getId().equals("0"))
+            return new Result<>(Constants.CODE_400, "用户名错误", null);
+        else
+            return new Result<>(Constants.CODE_200,"登陆成功",user);
+    }
+
     @PostMapping("/register")
     public User register(User user, String code) {
         if (Objects.nonNull(user) && loginService.register(user, code))
-            return loginService.login(user.getUsername(), user.getPassword());
+            return loginService.loginForPass(user.getUsername(), user.getPassword());
         else
             throw new LoginControllerException("账户注册失败");
     }
