@@ -4,7 +4,7 @@ package com.sq.SYTreeHole.controller;
 import com.sq.SYTreeHole.common.Constants;
 import com.sq.SYTreeHole.common.Result;
 import com.sq.SYTreeHole.entity.Publish;
-import com.sq.SYTreeHole.exception.ManagementPublishControllerException;
+import com.sq.SYTreeHole.exception.ManagementPublishException;
 import com.sq.SYTreeHole.service.publishService.PublishManagementService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,7 +27,7 @@ public class ManagementPublishController {
         if (Objects.nonNull(insert))
             return new Result<>(Constants.CODE_200, "添加成功！", insert);
         else
-            throw new ManagementPublishControllerException("服务器异常，插入失败");
+            throw new ManagementPublishException("服务器异常，插入失败");
     }
 
     @PostMapping("/publishModify")
@@ -37,7 +37,7 @@ public class ManagementPublishController {
         if (Objects.nonNull(modify))
             return new Result<>(Constants.CODE_200, "修改成功！", modify);
         else
-            throw new ManagementPublishControllerException("服务器异常，修改失败");
+            throw new ManagementPublishException("服务器异常，修改失败");
     }
 
     @PostMapping("/publishDel")
@@ -47,7 +47,7 @@ public class ManagementPublishController {
         if (Objects.nonNull(delete))
             return new Result<>(Constants.CODE_200, "删除成功", publish);
         else
-            throw new ManagementPublishControllerException("服务器异常删除失败");
+            throw new ManagementPublishException("服务器异常删除失败");
     }
 
     @PostMapping("publishGet")

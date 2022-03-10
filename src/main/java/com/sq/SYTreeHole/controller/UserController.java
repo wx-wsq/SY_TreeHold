@@ -5,13 +5,12 @@ import com.sq.SYTreeHole.Utils.JwtUtils;
 import com.sq.SYTreeHole.common.Constants;
 import com.sq.SYTreeHole.common.Result;
 import com.sq.SYTreeHole.entity.User;
-import com.sq.SYTreeHole.exception.LoginControllerException;
+import com.sq.SYTreeHole.exception.LoginException;
 import com.sq.SYTreeHole.service.LoginAndRegisterService.LoginService;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.Objects;
 
 @RestController
@@ -23,8 +22,8 @@ public class UserController {
         this.loginService = loginService;
     }
 
-    @GetMapping("/GetUserData")
-    public User getUserData(String id) {
+    @GetMapping("/user/{id}")
+    public User getUserData(@PathVariable  String id) {
         return loginService.getUserData(id);
     }
 
@@ -34,7 +33,7 @@ public class UserController {
         if(userData)
             return new Result<>(Constants.CODE_200,"修改成功！",null);
         else
-            throw new LoginControllerException("保存用户信息失败");
+            throw new LoginException("保存用户信息失败");
     }
 
     @GetMapping("/loginForPass")
@@ -67,17 +66,15 @@ public class UserController {
     public LoginDTO register(User user, String code) {
         if (Objects.nonNull(user) && loginService.register(user, code)) {
             if (Objects.isNull(loginService.loginForPass(user.getUsername(), user.getPassword())))
-                throw new LoginControllerException("服务器异常");
+                throw new LoginException("服务器异常");
             String token = JwtUtils.getToken(user.getUsername(), "SY-server");
             return new LoginDTO(Constants.CODE_200, "注册成功", -1L, token, user.getId());
         } else
-            throw new LoginControllerException("账户注册失败");
+            throw new LoginException("账户注册失败");
     }
 
     @GetMapping("/code")
     public Result<String> code(String username) {
-        if (Strings.isBlank(username))
-            throw new LoginControllerException("参数异常");
         String code = loginService.code(username);
         return new Result<>(Constants.CODE_200, "验证码", code);
     }

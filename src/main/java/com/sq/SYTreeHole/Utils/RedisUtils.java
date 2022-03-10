@@ -8,23 +8,20 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * redis链接
- */
 @Component
 public class RedisUtils {
 
-    private static RedisTemplate<Object, Object> redisTemplate;
+    private static RedisTemplate<String, String> redisTemplate;
 
-    public RedisUtils(RedisTemplate<Object, Object> redisTemplate) {
+    public RedisUtils(RedisTemplate<String, String> redisTemplate) {
         RedisUtils.redisTemplate = redisTemplate;
     }
 
-    public static ValueOperations<Object, Object> getRedisForString() {
+    public static ValueOperations<String, String> getRedisForString() {
         return redisTemplate.opsForValue();
     }
 
-    public static HashOperations<Object, Object, Object> getRedisForHSet() {
+    public static HashOperations<String, String, Object> getRedisForHSet() {
         return redisTemplate.opsForHash();
     }
 
@@ -60,6 +57,14 @@ public class RedisUtils {
                 (Integer) getRedisForHSet().get("publish:" + id, "version"),
                 (Integer) getRedisForHSet().get("publish:" + id, "isDelete"));
 
+    }
+
+    public static void incrVisits(Publish publish){
+        getRedisForHSet().put("publish:"+publish.getId(),"visits",publish.getVisits()+1);
+    }
+
+    public static void incrStar(Publish publish){
+        getRedisForHSet().put("publish:"+publish.getId(),"star",publish.getStar()+1);
     }
 
 }

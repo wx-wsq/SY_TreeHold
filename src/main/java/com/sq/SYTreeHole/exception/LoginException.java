@@ -1,11 +1,10 @@
 package com.sq.SYTreeHole.exception;
 
-
-public class PublishControllerException extends RuntimeException{
+public class LoginException extends RuntimeException{
 
     private final String message;
 
-    public PublishControllerException(String message) {
+    public LoginException(String message) {
         this.message = message;
     }
 

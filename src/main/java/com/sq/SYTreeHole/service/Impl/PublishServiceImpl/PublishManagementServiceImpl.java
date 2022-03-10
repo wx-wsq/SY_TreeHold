@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sq.SYTreeHole.dao.publishDao.PublishManagementMapper;
 import com.sq.SYTreeHole.entity.Publish;
-import com.sq.SYTreeHole.exception.ManagementPublishControllerException;
+import com.sq.SYTreeHole.exception.ManagementPublishException;
 import com.sq.SYTreeHole.service.publishService.PublishManagementService;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
     @Override
     public Publish insert(Publish publish) {
         if (Objects.isNull(publish) || Strings.isBlank(publish.getUserId()))
-            throw new ManagementPublishControllerException("空参异常");
+            throw new ManagementPublishException("空参异常");
         if (save(publish))
             return publish;
         else
@@ -28,13 +28,13 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
     @Override
     public Publish modify(Publish publish) {
         if (Objects.isNull(publish) || Strings.isBlank(publish.getUserId()))
-            throw new ManagementPublishControllerException("空参异常");
+            throw new ManagementPublishException("空参异常");
         QueryWrapper<Publish> queryWrapper = new QueryWrapper<>();
         queryWrapper
                 .eq("id", publish.getId())
                 .eq("user_id", publish.getUserId());
         if(Objects.isNull(getOne(queryWrapper)))
-            throw new ManagementPublishControllerException("系统错误...");
+            throw new ManagementPublishException("系统错误...");
         if (updateById(publish))
             return publish;
         else
@@ -44,7 +44,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
     @Override
     public Publish delete(Publish publish) {
         if (Objects.isNull(publish) || Strings.isBlank(publish.getUserId()))
-            throw new ManagementPublishControllerException("空参异常");
+            throw new ManagementPublishException("空参异常");
         QueryWrapper<Publish> queryWrapper = new QueryWrapper<>(publish);
         queryWrapper
                 .eq("id", publish.getId())
@@ -58,7 +58,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
     @Override
     public List<Publish> selectMy(String userId, String page) {
         if (Strings.isBlank(userId) || Strings.isBlank(page))
-            throw new ManagementPublishControllerException("空参异常");
+            throw new ManagementPublishException("空参异常");
         IPage<Publish> iPage = new Page<>(Long.parseLong(page), 10);
         QueryWrapper<Publish> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", userId);

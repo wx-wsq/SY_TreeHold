@@ -1,10 +1,10 @@
 package com.sq.SYTreeHole.exception;
 
-public class ManagementPublishControllerException extends RuntimeException{
+public class ManagementPublishException extends RuntimeException{
 
     private final String message;
 
-    public ManagementPublishControllerException(String message) {
+    public ManagementPublishException(String message) {
         this.message = message;
     }
 
