@@ -10,16 +10,31 @@ import com.sq.SYTreeHole.entity.User;
 import com.sq.SYTreeHole.exception.LoginControllerException;
 import com.sq.SYTreeHole.service.LoginAndRegisterService.LoginService;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.data.redis.connection.RedisStringCommands;
-import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
+import java.io.Serializable;
+import java.time.Duration;
 import java.util.Objects;
 import java.util.Random;
 
 @Service
 public class LoginServiceImpl extends ServiceImpl<LoginMapper, User> implements LoginService {
+
+    @Override
+    public User getUserData(Serializable id) {
+        if (Objects.isNull(id))
+            throw new LoginControllerException("空参异常");
+        return getById(id);
+    }
+
+    @Override
+    public boolean setUserData(User user) {
+        if (Objects.isNull(user) || Strings.isBlank(user.getUsername()) || Strings.isBlank(user.getPassword()))
+            throw new LoginControllerException("空参异常");
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username", user.getUsername());
+        return update(user, queryWrapper);
+    }
 
     public User loginForPass(String username, String password) {
         if (Strings.isBlank(username) || Strings.isBlank(password))
@@ -83,26 +98,17 @@ public class LoginServiceImpl extends ServiceImpl<LoginMapper, User> implements 
         }
     }
 
-
     @Override
     public String code(String username) {
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
-        byte[] code;
         for (int i = 0; i < 7; i++)
             sb.append(random.nextInt(10));
-        Boolean set = RedisUtils.getRedis()
-                .set("code".getBytes(StandardCharsets.UTF_8),
-                        sb.toString().getBytes(StandardCharsets.UTF_8),
-                        Expiration.seconds(300),
-                        RedisStringCommands.SetOption.SET_IF_ABSENT);
-        if (Boolean.TRUE.equals(set)) {
+        RedisUtils.getRedisForString().set("code", sb.toString(), Duration.ofMinutes(5));
+        if (RedisUtils.getRedisForString().get("code") != null) {
             //TODO 发送短信操作
-
             return sb.toString();
-        } else if ((code = RedisUtils.getRedis().get("code".getBytes(StandardCharsets.UTF_8))) != null)
-            return new String(code, StandardCharsets.UTF_8);
-        else
+        } else
             throw new LoginControllerException("验证码获取失败....redis错误");
     }
 }

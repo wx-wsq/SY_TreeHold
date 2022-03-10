@@ -2,7 +2,23 @@ package com.sq.SYTreeHole.service.LoginAndRegisterService;
 
 import com.sq.SYTreeHole.entity.User;
 
+import java.io.Serializable;
+
 public interface LoginService{
+
+    /**
+     * 获取用户信息
+     * @param id 用户序列化主键
+     * @return 返回用户信息
+     */
+    User getUserData(Serializable id);
+
+    /**
+     * 存储用户信息
+     * @param user 用户信息实体
+     * @return 是否更新成功
+     */
+    boolean setUserData(User user);
 
     /**
      * 密码登录
@@ -13,6 +29,12 @@ public interface LoginService{
     User loginForPass(String username, String password);
 
 
+    /**
+     * 验证码登录
+     * @param username 用户账号
+     * @param code 验证码
+     * @return 登陆后用户实体
+     */
     User loginForCode(String username, String code);
 
     /**
@@ -38,4 +60,5 @@ public interface LoginService{
      * @return 是否添加成功
      */
     boolean register(User user, String code);
+
 }

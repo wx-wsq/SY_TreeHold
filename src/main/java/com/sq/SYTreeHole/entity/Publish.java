@@ -25,7 +25,7 @@ public class Publish {
     private Integer mark;
     private Integer visits;
     private Integer star;
-    private Integer comments_number;
+    private Integer commentsNumber;
     @Version
     private Integer version;
     @TableLogic
