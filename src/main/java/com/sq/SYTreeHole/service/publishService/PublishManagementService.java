@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface PublishManagementService {
 
-    boolean insert(Publish publish);
+    Publish insert(Publish publish);
 
-    boolean modify(Publish publish);
+    Publish modify(Publish publish);
 
-    boolean delete(Publish publish);
+    Publish delete(Publish publish);
 
     List<Publish> selectMy(String userId, String page);
 

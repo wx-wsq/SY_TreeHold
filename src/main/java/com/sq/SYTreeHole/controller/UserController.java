@@ -1,5 +1,6 @@
 package com.sq.SYTreeHole.controller;
 
+import com.sq.SYTreeHole.Utils.JwtUtils;
 import com.sq.SYTreeHole.common.Constants;
 import com.sq.SYTreeHole.common.Result;
 import com.sq.SYTreeHole.entity.User;
@@ -8,7 +9,8 @@ import com.sq.SYTreeHole.service.LoginAndRegisterService.LoginService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -20,15 +22,18 @@ public class UserController {
         this.loginService = loginService;
     }
 
-    @PostMapping("/loginForPass")
-    public Result<User> loginForPass(String username, String password) {
+    @GetMapping("/loginForPass")
+    public Result<?> loginForPass(String username, String password) {
         User user = loginService.loginForPass(username, password);
         if (Objects.isNull(user))
             return new Result<>(Constants.CODE_400, "此用户尚未注册", null);
         else if(user.getId().equals("0"))
             return new Result<>(Constants.CODE_400, "用户名或密码错误", null);
-        else
-            return new Result<>(Constants.CODE_200,"登陆成功",null);
+        else {
+            String token = JwtUtils.getToken(username, "SY-server");
+            List<Object> objects = Arrays.asList(token, user);
+            return new Result<>(Constants.CODE_200, "登陆成功", objects);
+        }
     }
 
     @PostMapping("/loginForCode")
@@ -43,10 +48,11 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public User register(User user, String code) {
-        if (Objects.nonNull(user) && loginService.register(user, code))
-            return loginService.loginForPass(user.getUsername(), user.getPassword());
-        else
+    public Result<?> register(User user, String code) {
+        if (Objects.nonNull(user) && loginService.register(user, code)) {
+            User loginUser = loginService.loginForPass(user.getUsername(), user.getPassword());
+            return new Result<>(Constants.CODE_200,"注册成功",loginUser);
+        }else
             throw new LoginControllerException("账户注册失败");
     }
 

@@ -18,7 +18,7 @@ public class PublishServiceImpl extends ServiceImpl<PublishMapper, Publish> impl
 
     private static final int number = 10;
 
-    @Cacheable(key = "'all'+#page")
+    @Cacheable(key = "'all:'+#page")
     @Override
     public List<Publish> publishAsAll(String page) {
         if (Strings.isBlank(page))
@@ -27,7 +27,7 @@ public class PublishServiceImpl extends ServiceImpl<PublishMapper, Publish> impl
         return getBaseMapper().publishesAsTime(pageStart, pageStart+ number);
     }
 
-    @Cacheable(key = "'hot'+#page")
+    @Cacheable(key = "'hot:'+#page")
     @Override
     public List<Publish> publishAsHot(String page) {
         if (Strings.isBlank(page))

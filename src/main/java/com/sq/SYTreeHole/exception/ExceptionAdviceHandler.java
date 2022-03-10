@@ -12,8 +12,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @ControllerAdvice
 public class ExceptionAdviceHandler extends Exception{
 
+    @ExceptionHandler(PowerException.class)
+    public Result<?> powerException(Exception ex){
+        log.error("服务器错误...\n{}",String.valueOf(ex));
+        return new Result<>(Constants.CODE_401,"无权访问",ex.getMessage());
+    }
+
     @ExceptionHandler(RuntimeException.class)
     public Result<?> LoginException(Exception ex){
+        log.error("参数异常...\n{}",String.valueOf(ex));
+        return new Result<>(Constants.CODE_500,"参数异常",ex.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public Result<?> Exception(Exception ex){
         log.error("服务器错误...\n{}",String.valueOf(ex));
         return new Result<>(Constants.CODE_500,"服务器错误",ex.getMessage());
     }
