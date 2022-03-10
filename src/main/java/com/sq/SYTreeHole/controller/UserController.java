@@ -31,7 +31,7 @@ public class UserController {
             return new Result<>(Constants.CODE_200,"登陆成功",null);
     }
 
-    @GetMapping("/loginForCode")
+    @PostMapping("/loginForCode")
     public Result<?> loginForCode(String username, String code){
         User user = loginService.loginForCode(username, code);
         if (Objects.isNull(user))
