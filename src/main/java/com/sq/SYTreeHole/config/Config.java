@@ -72,7 +72,7 @@ public class Config {
                 registry
                         .addInterceptor(new JwtInterceptor())
                         .addPathPatterns("/**")
-                        .excludePathPatterns("/loginForPass","/loginForCode","/register","/code","resetPassword");
+                        .excludePathPatterns("/loginForPass","/loginForCode","/register","/code","/resetPassword");
             }
         };
     }
