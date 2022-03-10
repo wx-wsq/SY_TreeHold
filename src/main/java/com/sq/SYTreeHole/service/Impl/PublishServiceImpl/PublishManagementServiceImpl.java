@@ -9,19 +9,13 @@ import com.sq.SYTreeHole.entity.Publish;
 import com.sq.SYTreeHole.exception.ManagementPublishControllerException;
 import com.sq.SYTreeHole.service.publishService.PublishManagementService;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Objects;
 
-@CacheConfig(cacheNames = "myPublishes")
 @Service
 public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementMapper, Publish> implements PublishManagementService {
 
-    @CacheEvict(beforeInvocation = true)
     @Override
     public Publish insert(Publish publish) {
         if (Objects.isNull(publish) || Strings.isBlank(publish.getUserId()))
@@ -31,7 +25,6 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
         else
             return null;
     }
-    @CacheEvict(beforeInvocation = true)
     @Override
     public Publish modify(Publish publish) {
         if (Objects.isNull(publish) || Strings.isBlank(publish.getUserId()))
@@ -48,7 +41,6 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
             return null;
     }
 
-    @CacheEvict(key = "#publish.userId+':1'",allEntries = true,beforeInvocation = true)
     @Override
     public Publish delete(Publish publish) {
         if (Objects.isNull(publish) || Strings.isBlank(publish.getUserId()))
@@ -63,7 +55,6 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
             return null;
     }
 
-    @Cacheable(key = "#userId+':'+#page")
     @Override
     public List<Publish> selectMy(String userId, String page) {
         if (Strings.isBlank(userId) || Strings.isBlank(page))

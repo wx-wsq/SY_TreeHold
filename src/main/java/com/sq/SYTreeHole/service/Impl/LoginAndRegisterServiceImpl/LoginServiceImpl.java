@@ -11,7 +11,6 @@ import com.sq.SYTreeHole.exception.LoginControllerException;
 import com.sq.SYTreeHole.service.LoginAndRegisterService.LoginService;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
-
 import java.io.Serializable;
 import java.time.Duration;
 import java.util.Objects;
