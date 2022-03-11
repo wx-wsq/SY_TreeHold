@@ -87,7 +87,7 @@ public class LoginServiceImpl extends ServiceImpl<LoginMapper, User> implements 
 
     @Override
     public boolean register(User user, String code) {
-        if (Strings.isBlank(user.getUsername()) || Strings.isBlank(user.getPassword()) || Strings.isBlank(code))
+        if (Objects.isNull(user)||Strings.isBlank(user.getUsername()) || Strings.isBlank(user.getPassword()) || Strings.isBlank(code))
             throw new LoginException("空参异常");
         else if (!code.equals(code(user.getUsername())))
             throw new LoginException("验证码错误");
