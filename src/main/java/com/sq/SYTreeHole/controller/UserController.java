@@ -6,7 +6,7 @@ import com.sq.SYTreeHole.common.Constants;
 import com.sq.SYTreeHole.common.Result;
 import com.sq.SYTreeHole.entity.User;
 import com.sq.SYTreeHole.exception.LoginException;
-import com.sq.SYTreeHole.service.LoginAndRegisterService.LoginService;
+import com.sq.SYTreeHole.service.UserService.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,9 +16,9 @@ import java.util.Objects;
 @RestController
 public class UserController {
 
-    private final LoginService loginService;
+    private final UserService loginService;
 
-    public UserController(LoginService loginService) {
+    public UserController(UserService loginService) {
         this.loginService = loginService;
     }
 

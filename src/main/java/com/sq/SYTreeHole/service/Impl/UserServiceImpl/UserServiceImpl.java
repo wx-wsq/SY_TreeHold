@@ -1,14 +1,14 @@
-package com.sq.SYTreeHole.service.Impl.LoginAndRegisterServiceImpl;
+package com.sq.SYTreeHole.service.Impl.UserServiceImpl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sq.SYTreeHole.Utils.RedisUtils;
 import com.sq.SYTreeHole.Utils.SHA256Utils;
-import com.sq.SYTreeHole.dao.loginAndRegisterDao.LoginMapper;
+import com.sq.SYTreeHole.dao.UserDao.UserMapper;
 import com.sq.SYTreeHole.entity.User;
 import com.sq.SYTreeHole.exception.LoginException;
-import com.sq.SYTreeHole.service.LoginAndRegisterService.LoginService;
+import com.sq.SYTreeHole.service.UserService.UserService;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 import java.io.Serializable;
@@ -17,7 +17,7 @@ import java.util.Objects;
 import java.util.Random;
 
 @Service
-public class LoginServiceImpl extends ServiceImpl<LoginMapper, User> implements LoginService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     @Override
     public User getUserData(Serializable id) {

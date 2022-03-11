@@ -76,16 +76,16 @@ public class Config {
      * 若想配置失效，注释此bean
      * @return 返回webMVC自定配置类
      */
-    @Bean
-    public WebMvcConfigurer webMvcConfigurer(){
-        return new WebMvcConfigurer() {
-            @Override
-            public void addInterceptors(InterceptorRegistry registry) {
-                registry
-                        .addInterceptor(new JwtInterceptor())
-                        .addPathPatterns("/**")
-                        .excludePathPatterns("/loginForPass","/loginForCode","/register","/code","/resetPassword");
-            }
-        };
-    }
+//    @Bean
+//    public WebMvcConfigurer webMvcConfigurer(){
+//        return new WebMvcConfigurer() {
+//            @Override
+//            public void addInterceptors(InterceptorRegistry registry) {
+//                registry
+//                        .addInterceptor(new JwtInterceptor())
+//                        .addPathPatterns("/**")
+//                        .excludePathPatterns("/loginForPass","/loginForCode","/register","/code","/resetPassword");
+//            }
+//        };
+//    }
 }

@@ -1,10 +1,10 @@
-package com.sq.SYTreeHole.service.LoginAndRegisterService;
+package com.sq.SYTreeHole.service.UserService;
 
 import com.sq.SYTreeHole.entity.User;
 
 import java.io.Serializable;
 
-public interface LoginService{
+public interface UserService {
 
     /**
      * 获取用户信息

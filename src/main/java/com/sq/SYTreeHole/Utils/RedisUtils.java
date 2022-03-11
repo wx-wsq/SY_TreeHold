@@ -1,6 +1,7 @@
 package com.sq.SYTreeHole.Utils;
 
 import com.sq.SYTreeHole.entity.Publish;
+import com.sq.SYTreeHole.entity.User;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -40,6 +41,7 @@ public class RedisUtils {
         getRedisForHash().put("publish:" + publish.getId(), "visits", publish.getVisits());
         getRedisForHash().put("publish:" + publish.getId(), "star", publish.getStar());
         getRedisForHash().put("publish:" + publish.getId(), "commentsNumber", publish.getCommentsNumber());
+        getRedisForHash().put("publish:" + publish.getId(), "user", publish.getUser());
         getRedisForHash().put("publish:" + publish.getId(), "version", publish.getVersion());
         getRedisForHash().put("publish:" + publish.getId(), "isDelete", publish.getIsDelete());
 
@@ -57,6 +59,7 @@ public class RedisUtils {
                 (Integer) getRedisForHash().get("publish:" + id, "visits"),
                 (Integer) getRedisForHash().get("publish:" + id, "star"),
                 (Integer) getRedisForHash().get("publish:" + id, "commentsNumber"),
+                (User) getRedisForHash().get("publish:" + id, "user"),
                 (Integer) getRedisForHash().get("publish:" + id, "version"),
                 (Integer) getRedisForHash().get("publish:" + id, "isDelete"));
 

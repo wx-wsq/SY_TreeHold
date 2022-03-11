@@ -8,8 +8,6 @@ import com.sq.SYTreeHole.exception.PublishListException;
 import com.sq.SYTreeHole.service.publishService.PublishService;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

@@ -1,12 +1,12 @@
 package com.sq.SYTreeHole.entity;
 
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.Version;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.util.Date;
 
 @Data
@@ -26,6 +26,8 @@ public class Publish {
     private Integer visits;
     private Integer star;
     private Integer commentsNumber;
+    @TableField(exist = false)
+    private User user;
     @Version
     private Integer version;
     @TableLogic
