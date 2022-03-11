@@ -1,4 +1,4 @@
-package com.sq.SYTreeHole.service.UserService;
+package com.sq.SYTreeHole.service.userService;
 
 import com.sq.SYTreeHole.entity.User;
 
@@ -59,6 +59,6 @@ public interface UserService {
      * @param user Controller传来的User对象
      * @return 是否添加成功
      */
-    boolean register(User user, String code);
+    boolean register(User user);
 
 }

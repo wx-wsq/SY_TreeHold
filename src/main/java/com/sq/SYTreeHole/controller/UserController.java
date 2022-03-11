@@ -6,7 +6,7 @@ import com.sq.SYTreeHole.common.Constants;
 import com.sq.SYTreeHole.common.Result;
 import com.sq.SYTreeHole.entity.User;
 import com.sq.SYTreeHole.exception.LoginException;
-import com.sq.SYTreeHole.service.UserService.UserService;
+import com.sq.SYTreeHole.service.userService.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -63,8 +63,8 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public LoginDTO register(User user, String code) {
-        if (loginService.register(user, code)) {
+    public LoginDTO register(User user) {
+        if (loginService.register(user)) {
             if (Objects.isNull(loginService.loginForPass(user.getUsername(), user.getPassword())))
                 throw new LoginException("服务器异常");
             String token = JwtUtils.getToken(user.getUsername(), "SY-server");

@@ -1,15 +1,17 @@
-package com.sq.SYTreeHole.service.Impl.PublishServiceImpl;
+package com.sq.SYTreeHole.service.Impl.publishServiceImpl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.sq.SYTreeHole.Utils.RedisUtils;
 import com.sq.SYTreeHole.dao.publishDao.PublishManagementMapper;
 import com.sq.SYTreeHole.entity.Publish;
 import com.sq.SYTreeHole.exception.ManagementPublishException;
 import com.sq.SYTreeHole.service.publishService.PublishManagementService;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -18,13 +20,17 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
 
     @Override
     public Publish insert(Publish publish) {
-        if (Objects.isNull(publish) || Strings.isBlank(publish.getUserId()))
+        if (Objects.isNull(publish) || Strings.isBlank(publish.getUserId()) || Strings.isBlank(publish.getText()))
             throw new ManagementPublishException("空参异常");
-        if (save(publish))
+        if (save(publish)) {
+            RedisUtils.setPublishCache(publish);
+            RedisUtils.clearPublishListCacheOfId("all");
+            RedisUtils.clearPublishListCacheOfId("hot");
             return publish;
-        else
+        } else
             return null;
     }
+
     @Override
     public Publish modify(Publish publish) {
         if (Objects.isNull(publish) || Strings.isBlank(publish.getUserId()))
@@ -33,11 +39,12 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
         queryWrapper
                 .eq("id", publish.getId())
                 .eq("user_id", publish.getUserId());
-        if(Objects.isNull(getOne(queryWrapper)))
+        if (Objects.isNull(getOne(queryWrapper)))
             throw new ManagementPublishException("系统错误...");
-        if (updateById(publish))
+        if (updateById(publish)) {
+            RedisUtils.setPublishCache(publish);
             return publish;
-        else
+        }else
             return null;
     }
 
@@ -49,9 +56,11 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
         queryWrapper
                 .eq("id", publish.getId())
                 .eq("user_id", publish.getUserId());
-        if (remove(queryWrapper))
+        if (remove(queryWrapper)) {
+            RedisUtils.clearPublishListCacheOfId("all");
+            RedisUtils.clearPublishListCacheOfId("hot");
             return publish;
-        else
+        }else
             return null;
     }
 

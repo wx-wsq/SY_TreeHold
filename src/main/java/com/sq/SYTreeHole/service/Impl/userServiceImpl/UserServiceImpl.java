@@ -1,4 +1,4 @@
-package com.sq.SYTreeHole.service.Impl.UserServiceImpl;
+package com.sq.SYTreeHole.service.Impl.userServiceImpl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -8,7 +8,7 @@ import com.sq.SYTreeHole.Utils.SHA256Utils;
 import com.sq.SYTreeHole.dao.UserDao.UserMapper;
 import com.sq.SYTreeHole.entity.User;
 import com.sq.SYTreeHole.exception.LoginException;
-import com.sq.SYTreeHole.service.UserService.UserService;
+import com.sq.SYTreeHole.service.userService.UserService;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 import java.io.Serializable;
@@ -86,11 +86,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public boolean register(User user, String code) {
-        if (Objects.isNull(user)||Strings.isBlank(user.getUsername()) || Strings.isBlank(user.getPassword()) || Strings.isBlank(code))
+    public boolean register(User user) {
+        if (Objects.isNull(user)||Strings.isBlank(user.getUsername()) || Strings.isBlank(user.getPassword()))
             throw new LoginException("空参异常");
-        else if (!code.equals(code(user.getUsername())))
-            throw new LoginException("验证码错误");
         else {
             user.setPassword(SHA256Utils.encode(user.getPassword()));
             return save(user);
@@ -105,8 +103,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Random random = new Random();
         for (int i = 0; i < 7; i++)
             sb.append(random.nextInt(10));
-        RedisUtils.getRedisForString().set("code", sb.toString(), Duration.ofMinutes(5));
-        if (RedisUtils.getRedisForString().get("code") != null) {
+        RedisUtils.getRedisForString().set(username+":code", sb.toString(), Duration.ofMinutes(5));
+        if (RedisUtils.getRedisForString().get(username+":code") != null) {
             //TODO 发送短信操作
             return sb.toString();
         } else

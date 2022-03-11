@@ -8,6 +8,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -69,10 +70,15 @@ public class RedisUtils {
         getRedisForHash().put(type, "page:" + page, ids);
     }
 
+    public static void clearPublishListCacheOfId(String type){
+        redisTemplate.getRequiredConnectionFactory().getClusterConnection().del(type.getBytes(StandardCharsets.UTF_8));
+    }
+
     public static void setPublishListCache(List<Publish> publishes){
         for (Publish publish : publishes)
             setPublishCache(publish);
     }
+
     public static List<Publish> getPublishListCache(String type,Serializable page) {
         List<Publish> list = new ArrayList<>();
         String hotString = ((String) getRedisForHash().get(type, "page:" + page));
@@ -85,12 +91,16 @@ public class RedisUtils {
         return list;
     }
 
-    public static void incrVisits(Publish publish) {
+    public static void incrPublishVisits(Publish publish) {
         getRedisForHash().put("publish:" + publish.getId(), "visits", publish.getVisits() + 1);
     }
 
-    public static void incrStar(Publish publish) {
+    public static void incrPublishStar(Publish publish) {
         getRedisForHash().put("publish:" + publish.getId(), "star", publish.getStar() + 1);
+    }
+
+    public static void setCommentsCache(){
+        getRedisForHash().put("comments","","");
     }
 
 }

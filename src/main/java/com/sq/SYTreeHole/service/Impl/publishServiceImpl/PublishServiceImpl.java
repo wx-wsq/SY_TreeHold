@@ -1,4 +1,4 @@
-package com.sq.SYTreeHole.service.Impl.PublishServiceImpl;
+package com.sq.SYTreeHole.service.Impl.publishServiceImpl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sq.SYTreeHole.Utils.RedisUtils;

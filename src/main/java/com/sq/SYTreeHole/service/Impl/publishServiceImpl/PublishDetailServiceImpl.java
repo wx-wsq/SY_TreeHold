@@ -1,4 +1,4 @@
-package com.sq.SYTreeHole.service.Impl.PublishServiceImpl;
+package com.sq.SYTreeHole.service.Impl.publishServiceImpl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sq.SYTreeHole.Utils.RedisUtils;
@@ -24,7 +24,7 @@ public class PublishDetailServiceImpl extends ServiceImpl<PublishDetailMapper, P
             RedisUtils.setPublishCache(publish);
             return publish;
         } else {
-            RedisUtils.incrVisits(publishCache);
+            RedisUtils.incrPublishVisits(publishCache);
             return publishCache;
         }
     }
@@ -39,6 +39,6 @@ public class PublishDetailServiceImpl extends ServiceImpl<PublishDetailMapper, P
             publish.setStar(publish.getStar()+1);
             RedisUtils.setPublishCache(publish);
         } else
-            RedisUtils.incrStar(publishCache);
+            RedisUtils.incrPublishStar(publishCache);
     }
 }
