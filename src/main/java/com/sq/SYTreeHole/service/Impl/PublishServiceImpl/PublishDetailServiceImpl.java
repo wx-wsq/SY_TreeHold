@@ -21,7 +21,7 @@ public class PublishDetailServiceImpl extends ServiceImpl<PublishDetailMapper, P
         if (Strings.isBlank(publishCache.getUserId())) {
             Publish publish = getById(publishId);
             publish.setVisits(publish.getVisits() + 1);
-            RedisUtils.setPublishesCache(publish);
+            RedisUtils.setPublishCache(publish);
             return publish;
         } else {
             RedisUtils.incrVisits(publishCache);
@@ -37,7 +37,7 @@ public class PublishDetailServiceImpl extends ServiceImpl<PublishDetailMapper, P
         if (Strings.isBlank(publishCache.getUserId())) {
             Publish publish = getById(publishId);
             publish.setStar(publish.getStar()+1);
-            RedisUtils.setPublishesCache(publish);
+            RedisUtils.setPublishCache(publish);
         } else
             RedisUtils.incrStar(publishCache);
     }
