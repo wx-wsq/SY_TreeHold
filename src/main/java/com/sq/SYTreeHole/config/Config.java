@@ -1,6 +1,5 @@
 package com.sq.SYTreeHole.config;
 
-
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
@@ -22,7 +21,6 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
 import java.time.Duration;
 
 @EnableCaching
@@ -48,7 +46,7 @@ public class Config {
 
     /**
      * redis缓存相关配置
-     * @param redisConnectionFactory redis链接器工厂对象
+     * @param redisConnectionFactory redis链接器工厂
      * @return 返回自定的cache管理器
      */
     @Bean
@@ -63,6 +61,11 @@ public class Config {
                 .build();
     }
 
+    /**
+     * 自定义redisTemplate
+     * @param redisConnectionFactory redis连接工厂
+     * @return 返回自定的redisTemplate
+     */
     @Bean
     public RedisTemplate<String,String> redisTemplate(RedisConnectionFactory redisConnectionFactory){
         RedisTemplate<String,String> redisTemplate = new RedisTemplate<>();
