@@ -63,8 +63,8 @@ public class UserController {
     }
 
     @GetMapping("/register")
-    public LoginDTO register(User user) {
-        if (loginService.register(user)) {
+    public LoginDTO register(User user,String code) {
+        if (loginService.register(user,code)) {
             if (Objects.isNull(loginService.loginForPass(user.getUsername(), user.getPassword())))
                 throw new LoginException("服务器异常");
             String token = JwtUtils.getToken(user.getUsername(), "SY-server");

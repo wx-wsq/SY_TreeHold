@@ -58,7 +58,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public User loginForCode(String username, String code) {
         if (Strings.isBlank(username) || Strings.isBlank(code))
             throw new LoginException("空参异常");
-        if (!code.equals(code(code)))
+        if (!equalsCode(username, code))
             throw new LoginException("验证码错误");
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper
@@ -86,9 +86,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public boolean register(User user) {
-        if (Objects.isNull(user)||Strings.isBlank(user.getUsername()) || Strings.isBlank(user.getPassword()))
+    public boolean register(User user, String code) {
+        if (Objects.isNull(user) || Strings.isBlank(user.getUsername()) || Strings.isBlank(user.getPassword()))
             throw new LoginException("空参异常");
+        if (equalsCode(user.getUsername(), code))
+            throw new LoginException("验证码错误");
         else {
             user.setPassword(SHA256Utils.encode(user.getPassword()));
             return save(user);
@@ -97,17 +99,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public String code(String username) {
-        if(Strings.isBlank(username))
+        if (Strings.isBlank(username))
             throw new LoginException("空参异常");
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
         for (int i = 0; i < 5; i++)
             sb.append(random.nextInt(10));
-        RedisUtils.getRedisForString().set(username+":code", sb.toString(), Duration.ofMinutes(5));
-        if (RedisUtils.getRedisForString().get(username+":code") != null) {
+        RedisUtils.getRedisForString().set(username + ":code", sb.toString(), Duration.ofMinutes(5));
+        if (RedisUtils.getRedisForString().get(username + ":code") != null) {
             //TODO 发送短信操作
             return sb.toString();
         } else
             throw new LoginException("验证码获取失败....redis错误");
+    }
+
+    public boolean equalsCode(String username, String code) {
+        String cacheCode = RedisUtils.getRedisForString().get(username + ":code");
+        return code.equals(cacheCode);
     }
 }

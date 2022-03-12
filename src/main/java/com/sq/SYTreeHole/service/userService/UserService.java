@@ -59,6 +59,6 @@ public interface UserService {
      * @param user Controller传来的User对象
      * @return 是否添加成功
      */
-    boolean register(User user);
+    boolean register(User user,String code);
 
 }
