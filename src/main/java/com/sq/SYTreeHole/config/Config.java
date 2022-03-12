@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.sq.SYTreeHole.Interceptor.ErrorInterceptor;
 import com.sq.SYTreeHole.Interceptor.JwtInterceptor;
 import org.mybatis.spring.annotation.MapperScan;
 import org.mybatis.spring.annotation.MapperScans;
@@ -87,6 +88,8 @@ public class Config {
                         .addInterceptor(new JwtInterceptor())
                         .addPathPatterns("/**")
                         .excludePathPatterns("/loginForPass","/loginForCode","/register","/code","/resetPassword");
+                registry.addInterceptor(new ErrorInterceptor())
+                        .addPathPatterns("/**");
             }
         };
     }
