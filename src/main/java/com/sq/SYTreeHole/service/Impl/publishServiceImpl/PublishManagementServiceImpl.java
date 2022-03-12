@@ -59,6 +59,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
         if (remove(queryWrapper)) {
             RedisUtils.clearPublishListCacheOfId("all");
             RedisUtils.clearPublishListCacheOfId("hot");
+            RedisUtils.delPublishCache(publish.getId());
             return publish;
         }else
             return null;

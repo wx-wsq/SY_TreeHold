@@ -67,21 +67,24 @@ public class RedisUtils {
     }
 
     public static void setPublishListCacheOfId(String type,Serializable page, String ids) {
-        getRedisForHash().put(type, "page:" + page, ids);
+        getRedisForHash().put(type, "publishPage:" + page, ids);
     }
 
     public static void clearPublishListCacheOfId(String type){
         redisTemplate.getRequiredConnectionFactory().getClusterConnection().del(type.getBytes(StandardCharsets.UTF_8));
     }
 
+    public static void delPublishCache(Serializable publishId){
+        redisTemplate.delete("publish:"+publishId);
+    }
+
     public static void setPublishListCache(List<Publish> publishes){
-        for (Publish publish : publishes)
-            setPublishCache(publish);
+        publishes.forEach(RedisUtils::setPublishCache);
     }
 
     public static List<Publish> getPublishListCache(String type,Serializable page) {
         List<Publish> list = new ArrayList<>();
-        String hotString = ((String) getRedisForHash().get(type, "page:" + page));
+        String hotString = ((String) getRedisForHash().get(type, "publishPage:" + page));
         if(Strings.isBlank(hotString))
             return list;
         String[] hots = hotString.split(",");
@@ -95,12 +98,8 @@ public class RedisUtils {
         getRedisForHash().put("publish:" + publish.getId(), "visits", publish.getVisits() + 1);
     }
 
-    public static void incrPublishStar(Publish publish) {
-        getRedisForHash().put("publish:" + publish.getId(), "star", publish.getStar() + 1);
-    }
-
-    public static void setCommentsCache(){
-        getRedisForHash().put("comments","","");
+    public static void publishStar(Publish publish,Integer IOrD) {
+        getRedisForHash().put("publish:" + publish.getId(), "star", publish.getStar()+IOrD);
     }
 
 }

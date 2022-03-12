@@ -30,15 +30,16 @@ public class PublishDetailServiceImpl extends ServiceImpl<PublishDetailMapper, P
     }
 
     @Override
-    public void doStar(Serializable publishId) {
+    public void star(Serializable publishId, Integer IOrD) {
         if (Strings.isBlank((String) publishId))
             throw new PublishDetailException("空参异常");
         Publish publishCache = RedisUtils.getPublishCache(publishId);
         if (Strings.isBlank(publishCache.getUserId())) {
             Publish publish = getById(publishId);
-            publish.setStar(publish.getStar()+1);
+            publish.setStar(publish.getStar()+IOrD);
             RedisUtils.setPublishCache(publish);
-        } else
-            RedisUtils.incrPublishStar(publishCache);
+        } else {
+            RedisUtils.publishStar(publishCache,IOrD);
+        }
     }
 }

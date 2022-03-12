@@ -101,7 +101,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new LoginException("空参异常");
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
-        for (int i = 0; i < 7; i++)
+        for (int i = 0; i < 5; i++)
             sb.append(random.nextInt(10));
         RedisUtils.getRedisForString().set(username+":code", sb.toString(), Duration.ofMinutes(5));
         if (RedisUtils.getRedisForString().get(username+":code") != null) {

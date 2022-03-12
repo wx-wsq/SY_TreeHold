@@ -9,10 +9,10 @@ public interface CommentsService {
 
     List<Comment> Comments(Serializable publishId, Serializable page);
 
-    void InsertComment(Comment comments);
+    boolean InsertComment(Comment comments);
 
     void deleteComment(Serializable commentId,Serializable id);
 
-    void IncrStar(Serializable commentId);
+    void star(Serializable commentId,Integer IOrD);
 
 }

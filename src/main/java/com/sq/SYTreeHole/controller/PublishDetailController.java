@@ -26,8 +26,12 @@ public class PublishDetailController {
             throw new PublishDetailException("服务器异常");
         return new Result<>(Constants.CODE_200,"请求成功",detail);
     }
-    @GetMapping("/publishDetailDoStar")
-    public void doStar(String id){
-        publishDetailService.doStar(id);
+    @GetMapping("/publishDetailIncrStar")
+    public void IncrStar(String id){
+        publishDetailService.star(id,1);
+    }
+    @GetMapping("/publishDetailDecrStar")
+    public void DecrStar(String id){
+        publishDetailService.star(id,-1);
     }
 }

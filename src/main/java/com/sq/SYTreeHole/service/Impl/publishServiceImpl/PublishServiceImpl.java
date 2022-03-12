@@ -20,13 +20,13 @@ public class PublishServiceImpl extends ServiceImpl<PublishMapper, Publish> impl
         if (Strings.isBlank(page))
             throw new PublishListException("参数为空");
         long pageStart = (Long.parseLong(page) - 1) * 10L;
-        List<Publish> publishListCacheOfAll = RedisUtils.getPublishListCache("all", page);
+        List<Publish> publishListCacheOfAll = RedisUtils.getPublishListCache("publishAll", page);
         if (publishListCacheOfAll.size() == 0) {
             publishListCacheOfAll = getBaseMapper().publishesAsTime(pageStart, pageStart + number);
             RedisUtils.setPublishListCache(publishListCacheOfAll);
             StringBuilder sb = new StringBuilder();
             for (Publish publish : publishListCacheOfAll) sb.append(publish.getId()).append(",");
-            RedisUtils.setPublishListCacheOfId("all", page, sb.toString());
+            RedisUtils.setPublishListCacheOfId("publishAll", page, sb.toString());
         }
         return publishListCacheOfAll;
     }
@@ -36,13 +36,13 @@ public class PublishServiceImpl extends ServiceImpl<PublishMapper, Publish> impl
         if (Strings.isBlank(page))
             throw new PublishListException("参数为空");
         long pageStart = (Long.parseLong(page) - 1) * 10L;
-        List<Publish> publishListCacheOfHot = RedisUtils.getPublishListCache("hot", page);
+        List<Publish> publishListCacheOfHot = RedisUtils.getPublishListCache("publishHot", page);
         if (publishListCacheOfHot.size() == 0) {
             publishListCacheOfHot = getBaseMapper().publishesAsHot(pageStart, pageStart + number);
             RedisUtils.setPublishListCache(publishListCacheOfHot);
             StringBuilder sb = new StringBuilder();
             for (Publish publish : publishListCacheOfHot) sb.append(publish.getId()).append(",");
-            RedisUtils.setPublishListCacheOfId("hot", page, sb.toString());
+            RedisUtils.setPublishListCacheOfId("publishHot", page, sb.toString());
         }
         return publishListCacheOfHot;
     }

@@ -62,7 +62,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/register")
+    @GetMapping("/register")
     public LoginDTO register(User user) {
         if (loginService.register(user)) {
             if (Objects.isNull(loginService.loginForPass(user.getUsername(), user.getPassword())))

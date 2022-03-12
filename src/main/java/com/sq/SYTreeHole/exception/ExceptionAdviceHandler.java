@@ -21,7 +21,7 @@ public class ExceptionAdviceHandler extends Exception{
     @ExceptionHandler(RuntimeException.class)
     public Result<?> LoginException(Exception ex){
         log.error("参数异常...\n{}",String.valueOf(ex));
-        return new Result<>(Constants.CODE_500,"参数异常",ex.getMessage());
+        return new Result<>(Constants.CODE_400,"参数异常",ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

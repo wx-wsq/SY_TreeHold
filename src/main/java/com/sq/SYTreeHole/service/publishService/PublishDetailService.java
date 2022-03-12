@@ -17,5 +17,5 @@ public interface PublishDetailService {
      * 点赞
      * @param publishId 发表ID
      */
-    void doStar(Serializable publishId);
+    void star(Serializable publishId,Integer IOrD);
 }
