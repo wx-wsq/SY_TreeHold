@@ -19,17 +19,31 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
 import java.time.Duration;
+import java.util.ArrayList;
 
 @EnableCaching
 @Configuration
+@EnableSwagger2
+@EnableWebMvc
 @MapperScans({@MapperScan("com.sq.SYTreeHole.dao")})
 public class Config {
 
     /**
      * MP相关配置
+     *
      * @return 自定义的MP插件过滤器
      */
     @Bean
@@ -46,6 +60,7 @@ public class Config {
 
     /**
      * redis缓存相关配置
+     *
      * @param redisConnectionFactory redis链接器工厂
      * @return 返回自定的cache管理器
      */
@@ -63,12 +78,13 @@ public class Config {
 
     /**
      * 自定义redisTemplate
+     *
      * @param redisConnectionFactory redis连接工厂
      * @return 返回自定的redisTemplate
      */
     @Bean
-    public RedisTemplate<String,String> redisTemplate(RedisConnectionFactory redisConnectionFactory){
-        RedisTemplate<String,String> redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setKeySerializer(RedisSerializer.string());
         redisTemplate.setValueSerializer(RedisSerializer.json());
@@ -80,20 +96,50 @@ public class Config {
     /**
      * 拦截器配置
      * 若想配置失效，注释此bean
+     *
      * @return 返回webMVC自定配置类
      */
     @Bean
-    public WebMvcConfigurer webMvcConfigurer(){
+    public WebMvcConfigurer webMvcConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addInterceptors(InterceptorRegistry registry) {
                 registry
                         .addInterceptor(new JwtInterceptor())
                         .addPathPatterns("/**")
-                        .excludePathPatterns("/loginForPass","/loginForCode","/register","/code","/resetPassword");
-                registry.addInterceptor(new ErrorInterceptor())
-                        .addPathPatterns("/**");
+                        .excludePathPatterns("/loginForPass", "/loginForCode", "/register", "/code", "/resetPassword")
+                        .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**", "/swagger-ui.html", "/csrf", "/");
+//                registry.addInterceptor(new ErrorInterceptor())
+//                        .addPathPatterns("/**")
+//                        .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**", "/swagger-ui.html");
+            }
+
+            public void addResourceHandlers(ResourceHandlerRegistry registry) {
+                registry.addResourceHandler("/swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
+                registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
             }
         };
+    }
+
+    @Bean
+    public Docket docket() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo())
+                .select()
+                .apis(RequestHandlerSelectors.any())
+                .paths(PathSelectors.regex("(?!/error).*"))
+                .build();
+    }
+
+    public ApiInfo apiInfo() {
+        return new ApiInfo(
+                "首义感知树洞API文档",
+                "Api Documentation",
+                "V1.5",
+                "urn:tos",
+                new Contact("SQ", "http://81.70.47.134", "wsq2001@outlook.com"),
+                "Apache 2.0",
+                "https://www.apache.org/licenses/LICENSE-2.0",
+                new ArrayList<>());
     }
 }

@@ -26,8 +26,6 @@ public class ErrorInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        response.setCharacterEncoding("GBK");
-        response.getWriter().write("此错误异常会被服务器记录(包括请求IP)，请注意");
         HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
     }
 
