@@ -1,15 +1,17 @@
 package com.sq.SYTreeHole.service.publishService;
 
 import com.sq.SYTreeHole.entity.Publish;
+
+import java.io.Serializable;
 import java.util.List;
 
 public interface PublishManagementService {
 
-    Publish insert(Publish publish);
+    boolean insert(Publish publish);
 
-    Publish modify(Publish publish);
+    boolean modify(Publish publish);
 
-    Publish delete(Publish publish);
+    boolean delete(String publishId, String userId);
 
     List<Publish> selectMy(String userId, String page);
 

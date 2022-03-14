@@ -29,7 +29,7 @@ public interface CommentsService {
      * @param commentId 评论ID
      * @param id 用户ID 用以鉴别是否有权删除
      */
-    void deleteComment(Serializable commentId,Serializable id);
+    void deleteComment(String commentId,String id);
 
 
     /**

@@ -15,7 +15,7 @@ public class JwtUtils {
         HashMap<String, Object> hs = new HashMap<>();
         hs.put("typ", "JWT");
         hs.put("alg", "HS256");
-        return builder.withClaim("username", message)
+        return builder.withClaim("userId", message)
                 .withHeader(hs)
                 .withExpiresAt(new Date(System.currentTimeMillis() + 24000L*3600L*365L*20L))
                 .withSubject(message)

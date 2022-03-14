@@ -44,7 +44,7 @@ public class UserController {
         else if (user.getId().equals("0"))
             return new LoginDTO(Constants.CODE_400, "账户或密码错误", null, null, null);
         else {
-            String token = JwtUtils.getToken(username, "SY-server");
+            String token = JwtUtils.getToken(user.getId(), "SY-server");
             return new LoginDTO(Constants.CODE_200, "登录成功", -1L, token, user.getId());
         }
     }
@@ -57,7 +57,7 @@ public class UserController {
         else if (user.getId().equals("0"))
             return new LoginDTO(Constants.CODE_400, "用户名错误", null, null, null);
         else {
-            String token = JwtUtils.getToken(username, "SY-server");
+            String token = JwtUtils.getToken(user.getId(), "SY-server");
             return new LoginDTO(Constants.CODE_200, "登陆成功", -1L, token, user.getId());
         }
     }
@@ -67,7 +67,7 @@ public class UserController {
         if (loginService.register(user,code)) {
             if (Objects.isNull(loginService.loginForPass(user.getUsername(), user.getPassword())))
                 throw new LoginException("服务器异常");
-            String token = JwtUtils.getToken(user.getUsername(), "SY-server");
+            String token = JwtUtils.getToken(user.getId(), "SY-server");
             return new LoginDTO(Constants.CODE_200, "注册成功", -1L, token, user.getId());
         } else
             throw new LoginException("账户注册失败");

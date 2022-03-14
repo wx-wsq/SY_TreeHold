@@ -51,8 +51,8 @@ public class CommentsServiceImpl extends ServiceImpl<CommentsMapper, Comment> im
 
     @CacheEvict(beforeInvocation = true,allEntries = true)
     @Override
-    public void deleteComment(Serializable commentId, Serializable id) {
-        if (Strings.isBlank((String) commentId) || Strings.isBlank((String) id))
+    public void deleteComment(String commentId, String id) {
+        if (Strings.isBlank(commentId) || Strings.isBlank(id))
             throw new CommentsException("空参异常");
         if (getById(id).getUserId().equals(id)) {
             removeById(commentId);

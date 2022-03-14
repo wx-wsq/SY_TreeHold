@@ -14,7 +14,7 @@ public class ExceptionAdviceHandler extends Exception{
 
     @ExceptionHandler(PowerException.class)
     public Result<?> powerException(Exception ex){
-        log.error("服务器错误...\n{}",String.valueOf(ex));
+        log.error("越权访问...\n{}",String.valueOf(ex));
         return new Result<>(Constants.CODE_401,"无权访问",ex.getMessage());
     }
 

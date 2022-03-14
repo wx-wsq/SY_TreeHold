@@ -19,7 +19,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         String token = request.getHeader("token");
         if (Strings.isNotBlank(token)) {
             DecodedJWT tokenData = JwtUtils.getTokenData(token, "SY-server");
-            if (!Strings.isBlank(tokenData.getClaim("username").asString()))
+            if (!Strings.isBlank(tokenData.getClaim("userId").asString()))
                 return true;
             else
                 throw new PowerException("权限不足");

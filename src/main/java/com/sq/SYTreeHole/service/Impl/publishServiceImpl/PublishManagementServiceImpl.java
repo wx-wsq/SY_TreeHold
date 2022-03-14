@@ -11,7 +11,6 @@ import com.sq.SYTreeHole.exception.ManagementPublishException;
 import com.sq.SYTreeHole.service.publishService.PublishManagementService;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Objects;
 
@@ -19,20 +18,20 @@ import java.util.Objects;
 public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementMapper, Publish> implements PublishManagementService {
 
     @Override
-    public Publish insert(Publish publish) {
+    public boolean insert(Publish publish) {
         if (Objects.isNull(publish) || Strings.isBlank(publish.getUserId()) || Strings.isBlank(publish.getText()))
             throw new ManagementPublishException("空参异常");
         if (save(publish)) {
             RedisUtils.setPublishCache(publish);
             RedisUtils.clearPublishListCacheOfId("all");
             RedisUtils.clearPublishListCacheOfId("hot");
-            return publish;
+            return true;
         } else
             throw new ManagementPublishException("新增失败");
     }
 
     @Override
-    public Publish modify(Publish publish) {
+    public boolean modify(Publish publish) {
         if (Objects.isNull(publish) || Strings.isBlank(publish.getUserId()))
             throw new ManagementPublishException("空参异常");
         QueryWrapper<Publish> queryWrapper = new QueryWrapper<>();
@@ -43,26 +42,26 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
             throw new ManagementPublishException("系统错误...");
         if (updateById(publish)) {
             RedisUtils.setPublishCache(publish);
-            return publish;
+            return true;
         }else
-            return null;
+            return false;
     }
 
     @Override
-    public Publish delete(Publish publish) {
-        if (Objects.isNull(publish) || Strings.isBlank(publish.getUserId()))
+    public boolean delete(String publishId,String userId) {
+        if (Strings.isBlank(publishId) || Strings.isBlank(userId))
             throw new ManagementPublishException("空参异常");
-        QueryWrapper<Publish> queryWrapper = new QueryWrapper<>(publish);
+        QueryWrapper<Publish> queryWrapper = new QueryWrapper<>();
         queryWrapper
-                .eq("id", publish.getId())
-                .eq("user_id", publish.getUserId());
+                .eq("id", publishId)
+                .eq("user_id", userId);
         if (remove(queryWrapper)) {
             RedisUtils.clearPublishListCacheOfId("all");
             RedisUtils.clearPublishListCacheOfId("hot");
-            RedisUtils.delPublishCache(publish.getId());
-            return publish;
+            RedisUtils.delPublishCache(publishId);
+            return true;
         }else
-            return null;
+            return false;
     }
 
     @Override

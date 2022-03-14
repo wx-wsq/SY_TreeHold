@@ -19,6 +19,7 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -33,6 +34,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.List;
 
 @EnableCaching
 @Configuration
@@ -104,11 +106,11 @@ public class Config {
         return new WebMvcConfigurer() {
             @Override
             public void addInterceptors(InterceptorRegistry registry) {
-                registry
-                        .addInterceptor(new JwtInterceptor())
-                        .addPathPatterns("/**")
-                        .excludePathPatterns("/loginForPass", "/loginForCode", "/register", "/code", "/resetPassword")
-                        .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**", "/swagger-ui.html", "/csrf", "/");
+//                registry
+//                        .addInterceptor(new JwtInterceptor())
+//                        .addPathPatterns("/**")
+//                        .excludePathPatterns("/loginForPass", "/loginForCode", "/register", "/code", "/resetPassword")
+//                        .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**", "/swagger-ui.html", "/csrf", "/");
 //                registry.addInterceptor(new ErrorInterceptor())
 //                        .addPathPatterns("/**")
 //                        .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**", "/swagger-ui.html");
