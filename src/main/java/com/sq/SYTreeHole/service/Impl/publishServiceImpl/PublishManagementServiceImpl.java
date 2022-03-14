@@ -28,7 +28,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
             RedisUtils.clearPublishListCacheOfId("hot");
             return publish;
         } else
-            return null;
+            throw new ManagementPublishException("新增失败");
     }
 
     @Override
