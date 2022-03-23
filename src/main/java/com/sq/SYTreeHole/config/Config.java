@@ -85,8 +85,8 @@ public class Config {
      * @return 返回自定的redisTemplate
      */
     @Bean
-    public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setKeySerializer(RedisSerializer.string());
         redisTemplate.setValueSerializer(RedisSerializer.json());
@@ -119,6 +119,7 @@ public class Config {
             public void addResourceHandlers(ResourceHandlerRegistry registry) {
                 registry.addResourceHandler("/swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
                 registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+                registry.addResourceHandler("/image/**").addResourceLocations("file:C:/Users/wsq20/Desktop/image/");
             }
         };
     }

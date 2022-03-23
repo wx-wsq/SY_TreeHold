@@ -114,7 +114,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     public boolean equalsCode(String username, String code) {
-        String cacheCode = RedisUtils.getRedisForString().get(username + ":code");
+        String cacheCode = (String)RedisUtils.getRedisForString().get(username + ":code");
         return code.equals(cacheCode);
     }
 }

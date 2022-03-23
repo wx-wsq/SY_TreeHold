@@ -1,6 +1,8 @@
 package com.sq.SYTreeHole.service.publishService;
 
 import com.sq.SYTreeHole.entity.Publish;
+import com.sq.SYTreeHole.entity.PublishImages;
+
 import java.util.List;
 
 public interface PublishService {
@@ -18,4 +20,6 @@ public interface PublishService {
      * @return 返回对象集合
      */
     List<Publish> publishAsHot(String page);
+
+    List<List<PublishImages>> publishImages(List<Publish> publishes);
 }

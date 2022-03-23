@@ -1,17 +1,26 @@
 package com.sq.SYTreeHole.service.Impl.publishServiceImpl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sq.SYTreeHole.Utils.RedisUtils;
+import com.sq.SYTreeHole.dao.publishDao.PublishImagesMapper;
 import com.sq.SYTreeHole.dao.publishDao.PublishMapper;
 import com.sq.SYTreeHole.entity.Publish;
+import com.sq.SYTreeHole.entity.PublishImages;
 import com.sq.SYTreeHole.exception.PublishListException;
 import com.sq.SYTreeHole.service.publishService.PublishService;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class PublishServiceImpl extends ServiceImpl<PublishMapper, Publish> implements PublishService {
+
+    @Resource
+    private PublishImagesMapper publishImagesMapper;
 
     private static final int number = 10;
 
@@ -45,5 +54,22 @@ public class PublishServiceImpl extends ServiceImpl<PublishMapper, Publish> impl
             RedisUtils.setPublishListCacheOfId("publishHot", page, sb.toString());
         }
         return publishListCacheOfHot;
+    }
+
+    @Override
+    public List<List<PublishImages>> publishImages(List<Publish> publishes) {
+        List<List<PublishImages>> publishImagesList = new ArrayList<>();
+        for (Publish publish : publishes) {
+            List<PublishImages> publishImageCache = RedisUtils.getPublishImageCache(publish.getId());
+            if(publishImageCache==null) {
+                QueryWrapper<PublishImages> queryWrapper = new QueryWrapper<>();
+                queryWrapper.eq("publish_id",publish.getId());
+                List<PublishImages> publishImages = publishImagesMapper.selectList(queryWrapper);
+                publishImagesList.add(publishImages);
+                RedisUtils.setPublishImagesCache(publishImages);
+            }else
+                publishImagesList.add(publishImageCache);
+        }
+        return publishImagesList;
     }
 }

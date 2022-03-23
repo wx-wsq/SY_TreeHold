@@ -1,6 +1,7 @@
 package com.sq.SYTreeHole.Utils;
 
 import com.sq.SYTreeHole.entity.Publish;
+import com.sq.SYTreeHole.entity.PublishImages;
 import com.sq.SYTreeHole.entity.User;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.redis.core.HashOperations;
@@ -16,13 +17,13 @@ import java.util.List;
 @Component
 public class RedisUtils {
 
-    private static RedisTemplate<String, String> redisTemplate;
+    private static RedisTemplate<String, Object> redisTemplate;
 
-    public RedisUtils(RedisTemplate<String, String> redisTemplate) {
+    public RedisUtils(RedisTemplate<String, Object> redisTemplate) {
         RedisUtils.redisTemplate = redisTemplate;
     }
 
-    public static ValueOperations<String, String> getRedisForString() {
+    public static ValueOperations<String, Object> getRedisForString() {
         return redisTemplate.opsForValue();
     }
 
@@ -71,7 +72,10 @@ public class RedisUtils {
     }
 
     public static void clearPublishListCacheOfId(String type){
-        redisTemplate.getRequiredConnectionFactory().getClusterConnection().del(type.getBytes(StandardCharsets.UTF_8));
+        redisTemplate
+                .getRequiredConnectionFactory()
+                .getClusterConnection()
+                .del(type.getBytes(StandardCharsets.UTF_8));
     }
 
     public static void delPublishCache(Serializable publishId){
@@ -100,6 +104,23 @@ public class RedisUtils {
 
     public static void publishStar(Publish publish,Integer IOrD) {
         getRedisForHash().put("publish:" + publish.getId(), "star", publish.getStar()+IOrD);
+    }
+
+    public static void setPublishImagesCache(List<PublishImages> images){
+        if(images.size()>0)
+            getRedisForString().set("imageForPublishId:"+images.get(0).getPublishId(),images);
+    }
+
+    @SuppressWarnings("all")
+    public static List<PublishImages> getPublishImageCache(String publishId){
+        return (List<PublishImages>)getRedisForString().get("imageForPublishId:"+publishId);
+    }
+
+    public static void delPublishImageCache(String publishId){
+        redisTemplate
+                .getRequiredConnectionFactory()
+                .getClusterConnection()
+                .del(publishId.getBytes(StandardCharsets.UTF_8));
     }
 
 }
