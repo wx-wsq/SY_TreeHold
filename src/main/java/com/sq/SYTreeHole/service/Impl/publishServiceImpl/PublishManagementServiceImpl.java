@@ -13,6 +13,7 @@ import com.sq.SYTreeHole.exception.ManagementPublishException;
 import com.sq.SYTreeHole.service.publishService.PublishManagementService;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.annotation.Resource;
@@ -30,6 +31,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
     @Resource
     private PublishImagesMapper publishImagesMapper;
 
+    @Transactional
     @Override
     public boolean insert(Publish publish, MultipartHttpServletRequest multipartHttpServletRequest) {
         if (Objects.isNull(publish) || Strings.isBlank(publish.getUserId()) || Strings.isBlank(publish.getText()))
@@ -45,6 +47,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
             throw new ManagementPublishException("新增失败");
     }
 
+    @Transactional
     @Override
     public boolean modify(Publish publish, MultipartHttpServletRequest multipartHttpServletRequest) {
         if (Objects.isNull(publish) || Strings.isBlank(publish.getUserId()))
@@ -83,7 +86,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
             List<PublishImages> publishImages = publishImagesMapper.selectList(publishImagesQueryWrapper);
             publishImagesMapper.delete(publishImagesQueryWrapper);
             for (PublishImages publishImage : publishImages) {
-                File file = new File("C:/Users/wsq20/Desktop/image/"+publishImage.getSaveName());
+                File file = new File("D:/image/"+publishImage.getSaveName());
                 if(file.exists())
                     file.delete();
             }
@@ -131,7 +134,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
             assert imageName != null;
             String suffix = imageName.substring(imageName.lastIndexOf('.'));
             String saveName = UUID.randomUUID() + suffix;
-            File file = new File("C:/Users/wsq20/Desktop/image/" + saveName);
+            File file = new File("D:/image/" + saveName);
             if (file.getParent().isBlank())
                 new File(file.getParent()).mkdir();
             try {

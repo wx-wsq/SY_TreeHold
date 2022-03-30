@@ -19,7 +19,7 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
-import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -31,15 +31,14 @@ import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
-
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.List;
 
 @EnableCaching
 @Configuration
 @EnableSwagger2
 @EnableWebMvc
+@EnableTransactionManagement
 @MapperScans({@MapperScan("com.sq.SYTreeHole.dao")})
 public class Config {
 
@@ -119,7 +118,7 @@ public class Config {
             public void addResourceHandlers(ResourceHandlerRegistry registry) {
                 registry.addResourceHandler("/swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
                 registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
-                registry.addResourceHandler("/image/**").addResourceLocations("file:C:/Users/wsq20/Desktop/image/");
+                registry.addResourceHandler("/image/**").addResourceLocations("file:D:/image/");
             }
         };
     }

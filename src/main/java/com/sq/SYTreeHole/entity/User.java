@@ -25,6 +25,7 @@ public class User {
     @TableField(select = false)
     private String password;
     private String name;
+    private String head;
     private Date create_time;
     private String stuId;
     private Integer sex;
