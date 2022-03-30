@@ -17,7 +17,7 @@ public class JwtUtils {
         hs.put("alg", "HS256");
         return builder.withClaim("userId", message)
                 .withHeader(hs)
-                .withExpiresAt(new Date(System.currentTimeMillis() + 24000L*3600L*365L*20L))
+                .withExpiresAt(new Date(System.currentTimeMillis() + 24000L * 3600L * 365L * 20L))
                 .withSubject(message)
                 .withIssuer(issuer)
                 .withIssuedAt(new Date())

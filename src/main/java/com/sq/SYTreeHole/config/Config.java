@@ -15,10 +15,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -38,6 +38,7 @@ import java.util.ArrayList;
 @Configuration
 @EnableSwagger2
 @EnableWebMvc
+@EnableScheduling
 @EnableTransactionManagement
 @MapperScans({@MapperScan("com.sq.SYTreeHole.dao")})
 public class Config {
@@ -66,7 +67,7 @@ public class Config {
      * @return 返回自定的cache管理器
      */
     @Bean
-    public CacheManager cacheManager(JedisConnectionFactory redisConnectionFactory) {
+    public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(RedisCacheConfiguration.defaultCacheConfig()
                         .entryTtl(Duration.ofHours(24))

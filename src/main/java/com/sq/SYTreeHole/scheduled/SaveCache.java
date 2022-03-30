@@ -1,12 +1,12 @@
-package com.sq.SYTreeHole;
+package com.sq.SYTreeHole.scheduled;
 
 import com.sq.SYTreeHole.Utils.RedisUtils;
 import com.sq.SYTreeHole.dao.publishDao.PublishDetailMapper;
 import com.sq.SYTreeHole.entity.Publish;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.connection.RedisClusterConnection;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPool;
@@ -16,30 +16,28 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@SpringBootTest
-class SyTreeHoleApplicationTests {
+@Component
+public class SaveCache {
 
     @Resource
-    private RedisTemplate<String,Object> redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Resource
     private PublishDetailMapper publishDetailMapper;
 
-    @Test
-    void contextLoads() {
+    @Scheduled(cron = "0 7 0 * * *")
+    public void savePublishCacheToDataBase() {
         RedisClusterConnection clusterConnection = redisTemplate.getRequiredConnectionFactory().getClusterConnection();
         Map<String, JedisPool> clusterNodes = ((JedisCluster) clusterConnection.getNativeConnection()).getClusterNodes();
-        System.out.println(clusterNodes.entrySet());
         for (Map.Entry<String, JedisPool> stringJedisPoolEntry : clusterNodes.entrySet()) {
             Jedis jedis = stringJedisPoolEntry.getValue().getResource();
-            if(jedis.info("replication").contains("role:master")){
+            if (jedis.info("replication").contains("role:master")) {
                 Set<String> keys = jedis.keys("*");
                 for (String key : keys) {
                     Pattern pattern = Pattern.compile("publish:");
                     Matcher matcher = pattern.matcher(key);
-                    if(matcher.find()) {
+                    if (matcher.find()) {
                         Publish publish = RedisUtils.getPublishCache(key.substring(key.length() - 1));
-                        System.out.println(publish.getId());
                         publishDetailMapper.updateById(publish);
                     }
                 }
@@ -47,5 +45,4 @@ class SyTreeHoleApplicationTests {
         }
         RedisUtils.clearAll();
     }
-
 }

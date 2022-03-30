@@ -27,15 +27,15 @@ public class UserController {
     }
 
     @GetMapping("/user/{id}")
-    public User getUserData(@PathVariable  String id) {
+    public User getUserData(@PathVariable String id) {
         return loginService.getUserData(id);
     }
 
     @PostMapping("/setUserData")
     public Result<?> setUserData(User user, HttpServletRequest httpServletRequest) {
         boolean userData = loginService.setUserData(user, (MultipartHttpServletRequest) httpServletRequest);
-        if(userData)
-            return new Result<>(Constants.CODE_200,"修改成功！",null);
+        if (userData)
+            return new Result<>(Constants.CODE_200, "修改成功！", null);
         else
             throw new LoginException("保存用户信息失败");
     }
@@ -67,8 +67,8 @@ public class UserController {
     }
 
     @GetMapping("/register")
-    public LoginDTO register(User user,String code) {
-        if (loginService.register(user,code)) {
+    public LoginDTO register(User user, String code) {
+        if (loginService.register(user, code)) {
             if (Objects.isNull(loginService.loginForPass(user.getUsername(), user.getPassword())))
                 throw new LoginException("服务器异常");
             String token = JwtUtils.getToken(user.getId(), "SY-server");

@@ -14,6 +14,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
@@ -22,7 +23,6 @@ import java.util.Objects;
 @Service
 public class CommentsServiceImpl extends ServiceImpl<CommentsMapper, Comment> implements CommentsService {
     private static final int number = 10;
-
 
 
     @Cacheable(key = "#publishId+':'+#page")
@@ -49,7 +49,7 @@ public class CommentsServiceImpl extends ServiceImpl<CommentsMapper, Comment> im
         return save(comment);
     }
 
-    @CacheEvict(beforeInvocation = true,allEntries = true)
+    @CacheEvict(beforeInvocation = true, allEntries = true)
     @Override
     public void deleteComment(String commentId, String id) {
         if (Strings.isBlank(commentId) || Strings.isBlank(id))
@@ -62,7 +62,7 @@ public class CommentsServiceImpl extends ServiceImpl<CommentsMapper, Comment> im
 
     @CacheEvict
     @Override
-    public void star(Serializable commentId,Integer IOrD) {
+    public void star(Serializable commentId, Integer IOrD) {
         Comment comment = getById(commentId);
         comment.setStar(comment.getStar() + IOrD);
         updateById(comment);

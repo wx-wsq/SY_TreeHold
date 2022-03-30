@@ -78,6 +78,10 @@ public class RedisUtils {
                 .del(type.getBytes(StandardCharsets.UTF_8));
     }
 
+    public static void clearAll(){
+        redisTemplate.getRequiredConnectionFactory().getClusterConnection().flushAll();
+    }
+
     public static void delPublishCache(Serializable publishId){
         redisTemplate.delete("publish:"+publishId);
     }
@@ -121,5 +125,6 @@ public class RedisUtils {
                 .getClusterConnection()
                 .del(publishId.getBytes(StandardCharsets.UTF_8));
     }
+
 
 }

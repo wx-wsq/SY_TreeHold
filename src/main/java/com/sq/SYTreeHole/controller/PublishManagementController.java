@@ -10,6 +10,7 @@ import com.sq.SYTreeHole.service.publishService.PublishManagementService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ public class PublishManagementController {
 
     @PostMapping("/publishInsert")
     public Result<?> insert(Publish publish, HttpServletRequest httpServletRequest) {
-        boolean isInsert = publishManagementService.insert(publish,(MultipartHttpServletRequest) httpServletRequest);
+        boolean isInsert = publishManagementService.insert(publish, (MultipartHttpServletRequest) httpServletRequest);
         if (isInsert)
             return new Result<>(Constants.CODE_200, "添加成功！", null);
         else
@@ -44,8 +45,8 @@ public class PublishManagementController {
     }
 
     @PostMapping("/publishDel")
-    public Result<?> delete(String publishId,String userId) {
-        boolean isDelete = publishManagementService.delete(publishId,userId);
+    public Result<?> delete(String publishId, String userId) {
+        boolean isDelete = publishManagementService.delete(publishId, userId);
         if (isDelete)
             return new Result<>(Constants.CODE_200, "删除成功", null);
         else
@@ -55,13 +56,13 @@ public class PublishManagementController {
     @PostMapping("publishGet")
     public Result<?> selectMy(String userId, String page) {
         List<Publish> publishList = publishManagementService.selectMyPublish(userId, page);
-        if(publishList.size() == 0)
+        if (publishList.size() == 0)
             return new Result<>(Constants.CODE_200, "无数据", null);
         List<List<PublishImages>> imageList = publishManagementService.selectMyPublishImage(publishList);
-        return new Result<>(Constants.CODE_200, "成功", getPublishDTOs(publishList,imageList));
+        return new Result<>(Constants.CODE_200, "成功", getPublishDTOs(publishList, imageList));
     }
 
-    private List<PublishDTO> getPublishDTOs(List<Publish> publishList, List<List<PublishImages>> publishImages){
+    private List<PublishDTO> getPublishDTOs(List<Publish> publishList, List<List<PublishImages>> publishImages) {
         List<PublishDTO> publishDTOS = new ArrayList<>();
         for (Publish publish : publishList) {
             int flag = 0;

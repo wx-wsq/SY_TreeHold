@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
             throw new ManagementPublishException("空参异常");
         if (save(publish)) {
             List<MultipartFile> images = multipartHttpServletRequest.getFiles("images");
-            saveImages(images,publish);
+            saveImages(images, publish);
             RedisUtils.setPublishCache(publish);
             RedisUtils.clearPublishListCacheOfId("publishAll");
             RedisUtils.clearPublishListCacheOfId("publishHot");
@@ -61,7 +62,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
         if (updateById(publish)) {
             RedisUtils.setPublishCache(publish);
             RedisUtils.delPublishImageCache(publish.getId());
-            if(Objects.nonNull(multipartHttpServletRequest.getFiles("images"))) {
+            if (Objects.nonNull(multipartHttpServletRequest.getFiles("images"))) {
                 QueryWrapper<PublishImages> publishImagesQueryWrapper = new QueryWrapper<>();
                 publishImagesQueryWrapper.eq("publish_id", publish.getId());
                 List<PublishImages> publishImages = publishImagesMapper.selectList(publishImagesQueryWrapper);
@@ -85,12 +86,12 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
                 .eq("user_id", userId);
         if (remove(queryWrapper)) {
             QueryWrapper<PublishImages> publishImagesQueryWrapper = new QueryWrapper<>();
-            publishImagesQueryWrapper.eq("publish_id",publishId);
+            publishImagesQueryWrapper.eq("publish_id", publishId);
             List<PublishImages> publishImages = publishImagesMapper.selectList(publishImagesQueryWrapper);
             publishImagesMapper.delete(publishImagesQueryWrapper);
             for (PublishImages publishImage : publishImages) {
-                File file = new File("D:/image/"+publishImage.getSaveName());
-                if(file.exists())
+                File file = new File("D:/image/" + publishImage.getSaveName());
+                if (file.exists())
                     file.delete();
             }
             RedisUtils.clearPublishListCacheOfId("publishAll");
@@ -117,19 +118,19 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
         List<List<PublishImages>> imageList = new ArrayList<>();
         for (Publish publish : publishes) {
             List<PublishImages> publishImageCache = RedisUtils.getPublishImageCache(publish.getId());
-            if(publishImageCache==null) {
+            if (publishImageCache == null) {
                 QueryWrapper<PublishImages> queryWrapper = new QueryWrapper<>();
                 queryWrapper.eq("publish_id", publish.getId());
                 List<PublishImages> publishImages = publishImagesMapper.selectList(queryWrapper);
                 imageList.add(publishImages);
                 RedisUtils.setPublishImagesCache(publishImages);
-            }else
+            } else
                 imageList.add(publishImageCache);
         }
         return imageList;
     }
 
-    private void saveImages(List<MultipartFile> images, Publish publish){
+    private void saveImages(List<MultipartFile> images, Publish publish) {
         for (MultipartFile image : images) {
             if (image.isEmpty())
                 throw new ManagementPublishException("图片上传失败");

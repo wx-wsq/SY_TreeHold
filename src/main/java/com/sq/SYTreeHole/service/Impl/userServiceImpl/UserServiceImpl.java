@@ -35,27 +35,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Transactional
     @Override
-    public boolean setUserData(User user, MultipartHttpServletRequest multipartHttpServletRequest){
+    public boolean setUserData(User user, MultipartHttpServletRequest multipartHttpServletRequest) {
         if (Objects.isNull(user) || Strings.isBlank(user.getUsername()) || Strings.isBlank(user.getPassword()))
             throw new LoginException("空参异常");
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("username", user.getUsername());
         MultipartFile head = multipartHttpServletRequest.getFile("head");
-        if(Objects.nonNull(head)){
+        if (Objects.nonNull(head)) {
             String headImageName;
-            if(Strings.isNotBlank(user.getHeadUrl()))
-                headImageName = UUID.randomUUID() +".jpg";
+            if (Strings.isNotBlank(user.getHeadUrl()))
+                headImageName = UUID.randomUUID() + ".jpg";
             else
                 headImageName = user.getHeadUrl().substring(user.getHeadUrl().lastIndexOf("/"));
             try {
                 //TODO 更改路径
-                head.transferTo(new File("D:/images/heads/"+headImageName));
+                head.transferTo(new File("D:/images/heads/" + headImageName));
             } catch (IOException e) {
                 e.printStackTrace();
                 throw new RuntimeException("头像保存失败...");
             }
             //TODO 更改映射路径
-            user.setHeadUrl("http:/localhost/image/"+headImageName);
+            user.setHeadUrl("http:/localhost/image/" + headImageName);
         }
         return update(user, queryWrapper);
     }
@@ -139,7 +139,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     public boolean equalsCode(String username, String code) {
-        String cacheCode = (String)RedisUtils.getRedisForObject().get(username + ":code");
+        String cacheCode = (String) RedisUtils.getRedisForObject().get(username + ":code");
         return code.equals(cacheCode);
     }
 }

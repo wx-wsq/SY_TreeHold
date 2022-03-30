@@ -21,32 +21,32 @@ public class CommentsController {
     }
 
     @GetMapping("/comments")
-    public Result<?> comments(String publishId,String page){
+    public Result<?> comments(String publishId, String page) {
         List<Comment> commentList = commentsService.Comments(publishId, page);
-        return new Result<>(Constants.CODE_200,"成功",commentList);
+        return new Result<>(Constants.CODE_200, "成功", commentList);
     }
 
     @GetMapping("/commentIncrStar")
-    public void commentIncrStar(String commentId){
-        commentsService.star(commentId,1);
+    public void commentIncrStar(String commentId) {
+        commentsService.star(commentId, 1);
     }
 
     @GetMapping("/commentDecrStar")
-    public void commentDecrStar(String commentId){
-        commentsService.star(commentId,-1);
+    public void commentDecrStar(String commentId) {
+        commentsService.star(commentId, -1);
     }
 
     @PostMapping("/commentDel")
-    public Result<?> commentDel(String commentId,String userId){
-        commentsService.deleteComment(commentId,userId);
-        return new Result<>(Constants.CODE_200,"删除成功",null);
+    public Result<?> commentDel(String commentId, String userId) {
+        commentsService.deleteComment(commentId, userId);
+        return new Result<>(Constants.CODE_200, "删除成功", null);
     }
 
     @PostMapping("/commentIns")
-    public Result<?> commentInsert(Comment comment){
+    public Result<?> commentInsert(Comment comment) {
         boolean insertComment = commentsService.InsertComment(comment);
-        if(insertComment)
-            return new Result<>(Constants.CODE_200,"添加成功",comment);
+        if (insertComment)
+            return new Result<>(Constants.CODE_200, "添加成功", comment);
         else
             throw new CommentsException("添加评论失败...");
     }

@@ -11,11 +11,11 @@ import java.util.Base64;
  */
 public class SHA256Utils {
 
-    public static String encode(String str){
+    public static String encode(String str) {
         MessageDigest messageDigest;
-        String encodeStr="";
+        String encodeStr = "";
         try {
-            messageDigest= MessageDigest.getInstance("SHA-256");
+            messageDigest = MessageDigest.getInstance("SHA-256");
 
             encodeStr = Base64.getEncoder().encodeToString(messageDigest.digest(str.getBytes(StandardCharsets.UTF_8)));
         } catch (NoSuchAlgorithmException e) {
