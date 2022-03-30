@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.Objects;
 
 @RestController
@@ -28,8 +32,8 @@ public class UserController {
     }
 
     @PostMapping("/setUserData")
-    public Result<?> setUserData(User user){
-        boolean userData = loginService.setUserData(user);
+    public Result<?> setUserData(User user, HttpServletRequest httpServletRequest) {
+        boolean userData = loginService.setUserData(user, (MultipartHttpServletRequest) httpServletRequest);
         if(userData)
             return new Result<>(Constants.CODE_200,"修改成功！",null);
         else

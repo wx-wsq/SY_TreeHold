@@ -11,10 +11,17 @@ import com.sq.SYTreeHole.exception.LoginException;
 import com.sq.SYTreeHole.service.userService.UserService;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Random;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
@@ -26,12 +33,30 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return getById(id);
     }
 
+    @Transactional
     @Override
-    public boolean setUserData(User user) {
+    public boolean setUserData(User user, MultipartHttpServletRequest multipartHttpServletRequest){
         if (Objects.isNull(user) || Strings.isBlank(user.getUsername()) || Strings.isBlank(user.getPassword()))
             throw new LoginException("空参异常");
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("username", user.getUsername());
+        MultipartFile head = multipartHttpServletRequest.getFile("head");
+        if(Objects.nonNull(head)){
+            String headImageName;
+            if(Strings.isNotBlank(user.getHeadUrl()))
+                headImageName = UUID.randomUUID() +".jpg";
+            else
+                headImageName = user.getHeadUrl().substring(user.getHeadUrl().lastIndexOf("/"));
+            try {
+                //TODO 更改路径
+                head.transferTo(new File("D:/images/heads/"+headImageName));
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new RuntimeException("头像保存失败...");
+            }
+            //TODO 更改映射路径
+            user.setHeadUrl("http:/localhost/image/"+headImageName);
+        }
         return update(user, queryWrapper);
     }
 
@@ -105,8 +130,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Random random = new Random();
         for (int i = 0; i < 5; i++)
             sb.append(random.nextInt(10));
-        RedisUtils.getRedisForString().set(username + ":code", sb.toString(), Duration.ofMinutes(5));
-        if (RedisUtils.getRedisForString().get(username + ":code") != null) {
+        RedisUtils.getRedisForObject().set(username + ":code", sb.toString(), Duration.ofMinutes(5));
+        if (RedisUtils.getRedisForObject().get(username + ":code") != null) {
             //TODO 发送短信操作
             return sb.toString();
         } else
@@ -114,7 +139,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     public boolean equalsCode(String username, String code) {
-        String cacheCode = (String)RedisUtils.getRedisForString().get(username + ":code");
+        String cacheCode = (String)RedisUtils.getRedisForObject().get(username + ":code");
         return code.equals(cacheCode);
     }
 }

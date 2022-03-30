@@ -1,7 +1,9 @@
 package com.sq.SYTreeHole.service.userService;
 
 import com.sq.SYTreeHole.entity.User;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 public interface UserService {
@@ -18,7 +20,7 @@ public interface UserService {
      * @param user 用户信息实体
      * @return 是否更新成功
      */
-    boolean setUserData(User user);
+    boolean setUserData(User user, MultipartHttpServletRequest multipartHttpServletRequest);
 
     /**
      * 密码登录

@@ -61,17 +61,20 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
         if (updateById(publish)) {
             RedisUtils.setPublishCache(publish);
             RedisUtils.delPublishImageCache(publish.getId());
-            QueryWrapper<PublishImages> publishImagesQueryWrapper = new QueryWrapper<>();
-            publishImagesQueryWrapper.eq("publish_id",publish.getId());
-            List<PublishImages> publishImages = publishImagesMapper.selectList(publishImagesQueryWrapper);
-            publishImagesMapper.deleteBatchIds(publishImages);
-            List<MultipartFile> multipartFiles = multipartHttpServletRequest.getFiles("images");
-            saveImages(multipartFiles,publish);
+            if(Objects.nonNull(multipartHttpServletRequest.getFiles("images"))) {
+                QueryWrapper<PublishImages> publishImagesQueryWrapper = new QueryWrapper<>();
+                publishImagesQueryWrapper.eq("publish_id", publish.getId());
+                List<PublishImages> publishImages = publishImagesMapper.selectList(publishImagesQueryWrapper);
+                publishImagesMapper.deleteBatchIds(publishImages);
+                List<MultipartFile> multipartFiles = multipartHttpServletRequest.getFiles("images");
+                saveImages(multipartFiles, publish);
+            }
             return true;
         } else
             return false;
     }
 
+    @Transactional
     @Override
     public boolean delete(String publishId, String userId) {
         if (Strings.isBlank(publishId) || Strings.isBlank(userId))
@@ -134,6 +137,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
             assert imageName != null;
             String suffix = imageName.substring(imageName.lastIndexOf('.'));
             String saveName = UUID.randomUUID() + suffix;
+            //TODO 更改路径
             File file = new File("D:/image/" + saveName);
             if (file.getParent().isBlank())
                 new File(file.getParent()).mkdir();
@@ -141,6 +145,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
                 image.transferTo(file);
             } catch (IOException e) {
                 e.printStackTrace();
+                throw new RuntimeException("文件保存失败...");
             }
             publishImagesMapper.insert(
                     //TODO 保存地址需更改

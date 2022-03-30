@@ -23,7 +23,7 @@ public class RedisUtils {
         RedisUtils.redisTemplate = redisTemplate;
     }
 
-    public static ValueOperations<String, Object> getRedisForString() {
+    public static ValueOperations<String, Object> getRedisForObject() {
         return redisTemplate.opsForValue();
     }
 
@@ -108,12 +108,11 @@ public class RedisUtils {
 
     public static void setPublishImagesCache(List<PublishImages> images){
         if(images.size()>0)
-            getRedisForString().set("imageForPublishId:"+images.get(0).getPublishId(),images);
+            getRedisForObject().set("imageForPublishId:"+images.get(0).getPublishId(),images);
     }
-
     @SuppressWarnings("all")
     public static List<PublishImages> getPublishImageCache(String publishId){
-        return (List<PublishImages>)getRedisForString().get("imageForPublishId:"+publishId);
+        return (List<PublishImages>)getRedisForObject().get("imageForPublishId:"+publishId);
     }
 
     public static void delPublishImageCache(String publishId){

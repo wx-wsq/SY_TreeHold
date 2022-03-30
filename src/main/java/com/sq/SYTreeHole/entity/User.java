@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 import java.util.Date;
 
 @ApiModel("user-entity")
@@ -18,14 +20,14 @@ import java.util.Date;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Accessors(chain = true)
-public class User {
+public class User implements Serializable {
     @TableId
     private String id;
     private String username;
     @TableField(select = false)
     private String password;
     private String name;
-    private String head;
+    private String headUrl;
     private Date create_time;
     private String stuId;
     private Integer sex;

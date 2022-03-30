@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 import java.util.Date;
 
 @ApiModel("publish-entity")
@@ -15,7 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class Publish {
+public class Publish implements Serializable {
 
     @TableLogic
     private String id;
