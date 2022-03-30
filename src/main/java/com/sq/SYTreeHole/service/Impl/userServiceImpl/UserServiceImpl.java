@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -138,7 +137,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new LoginException("验证码获取失败....redis错误");
     }
 
-    public boolean equalsCode(String username, String code) {
+    private boolean equalsCode(String username, String code) {
         String cacheCode = (String) RedisUtils.getRedisForObject().get(username + ":code");
         return code.equals(cacheCode);
     }

@@ -26,7 +26,7 @@ public class ExceptionAdviceHandler extends Exception{
 
     @ExceptionHandler(Exception.class)
     public Result<?> Exception(Exception ex){
-        log.error("服务器错误...\n{}",String.valueOf(ex));
+        log.error("服务器异常...\n{}",String.valueOf(ex));
         return new Result<>(Constants.CODE_500,"服务器错误",ex.getMessage());
     }
 }
