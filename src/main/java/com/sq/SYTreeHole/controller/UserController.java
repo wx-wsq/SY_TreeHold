@@ -36,7 +36,7 @@ public class UserController {
             throw new LoginException("保存用户信息失败");
     }
 
-    @GetMapping("/loginForPass")
+    @PostMapping("/loginForPass")
     public LoginDTO loginForPass(String username, String password) {
         User user = loginService.loginForPass(username, password);
         if (Objects.isNull(user))
