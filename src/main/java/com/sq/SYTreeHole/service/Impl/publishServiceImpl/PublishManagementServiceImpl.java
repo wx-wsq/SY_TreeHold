@@ -88,6 +88,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
             List<PublishImages> publishImages = publishImagesMapper.selectList(publishImagesQueryWrapper);
             publishImagesMapper.delete(publishImagesQueryWrapper);
             for (PublishImages publishImage : publishImages) {
+                //TODO 更改路径
                 File file = new File("D:/image/" + publishImage.getSaveName());
                 if (file.exists())
                     file.delete();
@@ -138,8 +139,9 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
             String saveName = UUID.randomUUID() + suffix;
             //TODO 更改路径
             File file = new File("D:/image/" + saveName);
-            if (file.getParent().isBlank())
-                new File(file.getParent()).mkdir();
+            File path = new File(file.getParent());
+            if (!path.exists())
+                path.mkdir();
             try {
                 image.transferTo(file);
             } catch (IOException e) {
