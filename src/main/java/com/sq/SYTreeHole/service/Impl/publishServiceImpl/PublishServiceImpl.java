@@ -65,8 +65,10 @@ public class PublishServiceImpl extends ServiceImpl<PublishMapper, Publish> impl
                 QueryWrapper<PublishImages> queryWrapper = new QueryWrapper<>();
                 queryWrapper.eq("publish_id", publish.getId());
                 List<PublishImages> publishImages = publishImagesMapper.selectList(queryWrapper);
-                publishImagesList.add(publishImages);
-                RedisUtils.setPublishImagesCache(publishImages);
+                if(publishImages.size()!=0) {
+                    publishImagesList.add(publishImages);
+                    RedisUtils.setPublishImagesCache(publishImages);
+                }
             } else
                 publishImagesList.add(publishImageCache);
         }
