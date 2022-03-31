@@ -140,8 +140,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
             //TODO 更改路径
             File file = new File("D:/image/" + saveName);
             File path = new File(file.getParent());
-            //TODO 下面对父文件路径判空逻辑有待修改
-            if (path.exists())
+            if (!path.exists())
                 path.mkdir();
             try {
                 image.transferTo(file);
