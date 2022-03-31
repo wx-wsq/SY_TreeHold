@@ -10,6 +10,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Service
 public class PublishDetailServiceImpl extends ServiceImpl<PublishDetailMapper, Publish> implements PublishDetailService {
@@ -18,13 +19,18 @@ public class PublishDetailServiceImpl extends ServiceImpl<PublishDetailMapper, P
         if (Strings.isBlank((String) publishId))
             throw new PublishDetailException("空参异常");
         Publish publishCache = RedisUtils.getPublishCache(publishId);
-        if (Strings.isBlank(publishCache.getUserId())) {
+        if (Objects.isNull(publishCache.getId())) {
             Publish publish = getById(publishId);
+            if(Objects.isNull(publish)) {
+                RedisUtils.setPublishCache(new Publish().setId(publishId + ""));
+                return null;
+            }
             publish.setVisits(publish.getVisits() + 1);
             RedisUtils.setPublishCache(publish);
             return publish;
         } else {
-            RedisUtils.incrPublishVisits(publishCache);
+            if(Objects.nonNull(publishCache.getVisits()))
+                RedisUtils.incrPublishVisits(publishCache);
             return publishCache;
         }
     }

@@ -29,12 +29,13 @@ public class SaveCache {
     public void savePublishCacheToDataBase() {
         RedisClusterConnection clusterConnection = redisTemplate.getRequiredConnectionFactory().getClusterConnection();
         Map<String, JedisPool> clusterNodes = ((JedisCluster) clusterConnection.getNativeConnection()).getClusterNodes();
-        for (Map.Entry<String, JedisPool> stringJedisPoolEntry : clusterNodes.entrySet()) {
-            Jedis jedis = stringJedisPoolEntry.getValue().getResource();
+        for (Map.Entry<String, JedisPool> JedisPoolEntry : clusterNodes.entrySet()) {
+            JedisPool pool = JedisPoolEntry.getValue();
+            Jedis jedis = pool.getResource();
             if (jedis.info("replication").contains("role:master")) {
                 Set<String> keys = jedis.keys("*");
                 for (String key : keys) {
-                    Pattern pattern = Pattern.compile("publish:");
+                    Pattern pattern = Pattern.compile("^publish:");
                     Matcher matcher = pattern.matcher(key);
                     if (matcher.find()) {
                         Publish publish = RedisUtils.getPublishCache(key.substring(key.length() - 1));
@@ -42,6 +43,7 @@ public class SaveCache {
                     }
                 }
             }
+            pool.returnResource(jedis);
         }
         RedisUtils.clearAll();
     }

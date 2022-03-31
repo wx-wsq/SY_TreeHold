@@ -78,8 +78,6 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
     @Transactional
     @Override
     public boolean delete(String publishId, String userId) {
-        if (Strings.isBlank(publishId) || Strings.isBlank(userId))
-            throw new ManagementPublishException("空参异常");
         QueryWrapper<Publish> queryWrapper = new QueryWrapper<>();
         queryWrapper
                 .eq("id", publishId)

@@ -22,8 +22,6 @@ public class PublishDetailController {
     @GetMapping("/publishDetail/{id}")
     public Result<Publish> detail(@PathVariable String id){
         Publish detail = publishDetailService.detail(id);
-        if(Objects.isNull(detail))
-            throw new PublishDetailException("服务器异常");
         return new Result<>(Constants.CODE_200,"请求成功",detail);
     }
     @GetMapping("/publishDetailIncrStar")

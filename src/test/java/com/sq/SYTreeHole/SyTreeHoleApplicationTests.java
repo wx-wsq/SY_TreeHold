@@ -4,6 +4,7 @@ import com.sq.SYTreeHole.Utils.RedisUtils;
 import com.sq.SYTreeHole.dao.publishDao.PublishDetailMapper;
 import com.sq.SYTreeHole.entity.Publish;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.connection.RedisClusterConnection;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -22,8 +23,6 @@ class SyTreeHoleApplicationTests {
     @Resource
     private RedisTemplate<String,Object> redisTemplate;
 
-    @Resource
-    private PublishDetailMapper publishDetailMapper;
 
     @Test
     void contextLoads() {
@@ -35,17 +34,13 @@ class SyTreeHoleApplicationTests {
             if(jedis.info("replication").contains("role:master")){
                 Set<String> keys = jedis.keys("*");
                 for (String key : keys) {
-                    Pattern pattern = Pattern.compile("publish:");
+                    Pattern pattern = Pattern.compile("^publish:");
                     Matcher matcher = pattern.matcher(key);
-                    if(matcher.find()) {
-                        Publish publish = RedisUtils.getPublishCache(key.substring(key.length() - 1));
-                        System.out.println(publish.getId());
-                        publishDetailMapper.updateById(publish);
-                    }
+                    if(matcher.find())
+                        System.out.println(key);
                 }
             }
         }
-        RedisUtils.clearAll();
     }
 
 }
