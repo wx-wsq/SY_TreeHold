@@ -50,7 +50,8 @@ public class RedisUtils {
     }
 
     public static Publish getPublishCache(Serializable id) {
-        return new Publish((String) id,
+        return new Publish(
+                (String) getRedisForHash().get("publish:" + id, "id"),
                 (String) getRedisForHash().get("publish:" + id, "userId"),
                 (String) getRedisForHash().get("publish:" + id, "title"),
                 (String) getRedisForHash().get("publish:" + id, "text"),

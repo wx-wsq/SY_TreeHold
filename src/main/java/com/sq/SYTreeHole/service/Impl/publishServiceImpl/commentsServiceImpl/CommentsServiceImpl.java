@@ -46,15 +46,14 @@ public class CommentsServiceImpl extends ServiceImpl<CommentsMapper, Comment> im
                 || Strings.isBlank(comment.getUserId())
                 || Strings.isBlank(comment.getPublishId()))
             throw new CommentsException("空参异常");
-        return save(comment);
+        else
+            return save(comment);
     }
 
     @CacheEvict(beforeInvocation = true, allEntries = true)
     @Override
-    public void deleteComment(String commentId, String id) {
-        if (Strings.isBlank(commentId) || Strings.isBlank(id))
-            throw new CommentsException("空参异常");
-        if (getById(id).getUserId().equals(id)) {
+    public void deleteComment(String commentId, String userId) {
+        if (getById(commentId).getUserId().equals(userId)) {
             removeById(commentId);
         } else
             throw new PowerException("无权进行此操作");

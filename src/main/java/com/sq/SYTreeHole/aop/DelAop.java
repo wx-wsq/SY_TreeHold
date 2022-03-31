@@ -21,14 +21,14 @@ public class DelAop {
     @Resource
     HttpServletRequest httpServletRequest;
 
-    @Pointcut("execution(public * com.sq.SYTreeHole.service.Impl..delete*(..))")
+    @Pointcut("execution(public * com.sq.SYTreeHole.service.Impl..delete*(String,String))")
     public void delAspect() {
     }
 
     @Before("delAspect()")
     public void doBefore(JoinPoint joinPoint) {
         Object[] args = joinPoint.getArgs();
-        if (Objects.isNull(args[1]))
+        if (Objects.isNull(args[1]) || Objects.isNull(args[0]))
             throw new ManagementPublishException("空参异常");
         String token = httpServletRequest.getHeader("token");
         if (Strings.isBlank(token))

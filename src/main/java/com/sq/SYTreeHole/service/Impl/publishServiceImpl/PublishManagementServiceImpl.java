@@ -78,8 +78,6 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
     @Transactional
     @Override
     public boolean delete(String publishId, String userId) {
-        if (Strings.isBlank(publishId) || Strings.isBlank(userId))
-            throw new ManagementPublishException("空参异常");
         QueryWrapper<Publish> queryWrapper = new QueryWrapper<>();
         queryWrapper
                 .eq("id", publishId)
@@ -90,6 +88,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
             List<PublishImages> publishImages = publishImagesMapper.selectList(publishImagesQueryWrapper);
             publishImagesMapper.delete(publishImagesQueryWrapper);
             for (PublishImages publishImage : publishImages) {
+                //TODO 更改路径
                 File file = new File("D:/image/" + publishImage.getSaveName());
                 if (file.exists())
                     file.delete();
@@ -140,8 +139,10 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
             String saveName = UUID.randomUUID() + suffix;
             //TODO 更改路径
             File file = new File("D:/image/" + saveName);
-            if (file.getParent().isBlank())
-                new File(file.getParent()).mkdir();
+            File path = new File(file.getParent());
+            //TODO 下面对父文件路径判空逻辑有待修改
+            if (path.exists())
+                path.mkdir();
             try {
                 image.transferTo(file);
             } catch (IOException e) {
