@@ -22,7 +22,7 @@ public interface PublishDetailService {
     List<PublishImages> publishImages(String publishId);
 
     /**
-     * 点赞
+     * 点赞(取消赞)
      * @param publishId 发表ID
      */
     void star(Serializable publishId,Integer IOrD);
