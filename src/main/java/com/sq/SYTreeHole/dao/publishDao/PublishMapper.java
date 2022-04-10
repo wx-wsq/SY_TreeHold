@@ -28,7 +28,7 @@ public interface PublishMapper extends BaseMapper<Publish> {
     })
     @Select("select * from th_publish where" +
             "                               IF(#{index}=0,mark between 0 and 1," +
-            "                                   IF(#{index]=1,mark between 0 and 0.3," +
+            "                                   IF(#{index}=1,mark between 0 and 0.3," +
             "                                       IF(#{index}=2,mark between 0.3 and 0.5," +
             "                                           IF(#{index}=3,mark between 0.5 and 0.7," +
             "                                               IF(#{index}=4,mark between 0.7 and 1, mark<0))))) order by (visits+th_publish.star*3+th_publish.comments_number*6)/10 DESC limit #{start}, #{end}")
