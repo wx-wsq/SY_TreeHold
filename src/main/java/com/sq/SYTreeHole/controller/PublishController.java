@@ -24,8 +24,8 @@ public class PublishController {
     }
 
     @GetMapping("/publishAll")
-    public Result<?> publishesAsAll(String page) {
-        List<Publish> publishList = publishService.publishAsAll(page);
+    public Result<?> publishesAsAll(String page, String index) {
+        List<Publish> publishList = publishService.publishAsAll(page, index);
         if (publishList.size() == 0)
             return new Result<>(Constants.CODE_200, "无数据", null);
         List<List<PublishImages>> publishImages = publishService.publishImages(publishList);
@@ -33,8 +33,8 @@ public class PublishController {
     }
 
     @GetMapping("/publishHot")
-    public Result<?> publishesAsHot(String page) {
-        List<Publish> publishList = publishService.publishAsHot(page);
+    public Result<?> publishesAsHot(String page, String index) {
+        List<Publish> publishList = publishService.publishAsHot(page, index);
         if (publishList.size() == 0)
             return new Result<>(Constants.CODE_200, "无数据", null);
         List<List<PublishImages>> publishImages = publishService.publishImages(publishList);

@@ -12,14 +12,14 @@ public interface PublishService {
      * @param page 页数，默认一次请求返回十条
      * @return 返回对象集合
      */
-    List<Publish> publishAsAll(String page);
+    List<Publish> publishAsAll(String page, String index);
 
     /**
      * 按热度排序查找
      * @param page 页数，默认一次请求返回十条
      * @return 返回对象集合
      */
-    List<Publish> publishAsHot(String page);
+    List<Publish> publishAsHot(String page, String index);
 
     List<List<PublishImages>> publishImages(List<Publish> publishes);
 }

@@ -25,33 +25,33 @@ public class PublishServiceImpl extends ServiceImpl<PublishMapper, Publish> impl
     private static final int number = 10;
 
     @Override
-    public List<Publish> publishAsAll(String page) {
+    public List<Publish> publishAsAll(String page, String index) {
         if (Strings.isBlank(page))
             throw new PublishListException("参数为空");
         long pageStart = (Long.parseLong(page) - 1) * 10L;
         List<Publish> publishListCacheOfAll = RedisUtils.getPublishListCache("publishAll", page);
         if (publishListCacheOfAll.size() == 0) {
-            publishListCacheOfAll = getBaseMapper().publishesAsTime(pageStart, pageStart + number);
+            publishListCacheOfAll = getBaseMapper().publishesAsTime(pageStart, pageStart + number, index);
             RedisUtils.setPublishListCache(publishListCacheOfAll);
-            StringBuilder sb = new StringBuilder();
-            for (Publish publish : publishListCacheOfAll) sb.append(publish.getId()).append(",");
-            RedisUtils.setPublishListCacheOfId("publishAll", page, sb.toString());
+//            StringBuilder sb = new StringBuilder();
+//            for (Publish publish : publishListCacheOfAll) sb.append(publish.getId()).append(",");
+//            RedisUtils.setPublishListCacheOfId("publishAll", page, sb.toString());
         }
         return publishListCacheOfAll;
     }
 
     @Override
-    public List<Publish> publishAsHot(String page) {
+    public List<Publish> publishAsHot(String page, String index) {
         if (Strings.isBlank(page))
             throw new PublishListException("参数为空");
         long pageStart = (Long.parseLong(page) - 1) * 10L;
         List<Publish> publishListCacheOfHot = RedisUtils.getPublishListCache("publishHot", page);
         if (publishListCacheOfHot.size() == 0) {
-            publishListCacheOfHot = getBaseMapper().publishesAsHot(pageStart, pageStart + number);
+            publishListCacheOfHot = getBaseMapper().publishesAsHot(pageStart, pageStart + number, index);
             RedisUtils.setPublishListCache(publishListCacheOfHot);
-            StringBuilder sb = new StringBuilder();
-            for (Publish publish : publishListCacheOfHot) sb.append(publish.getId()).append(",");
-            RedisUtils.setPublishListCacheOfId("publishHot", page, sb.toString());
+//            StringBuilder sb = new StringBuilder();
+//            for (Publish publish : publishListCacheOfHot) sb.append(publish.getId()).append(",");
+//            RedisUtils.setPublishListCacheOfId("publishHot", page, sb.toString());
         }
         return publishListCacheOfHot;
     }
@@ -65,7 +65,7 @@ public class PublishServiceImpl extends ServiceImpl<PublishMapper, Publish> impl
                 QueryWrapper<PublishImages> queryWrapper = new QueryWrapper<>();
                 queryWrapper.eq("publish_id", publish.getId());
                 List<PublishImages> publishImages = publishImagesMapper.selectList(queryWrapper);
-                if(publishImages.size()!=0) {
+                if (publishImages.size() != 0) {
                     publishImagesList.add(publishImages);
                     RedisUtils.setPublishImagesCache(publishImages);
                 }
