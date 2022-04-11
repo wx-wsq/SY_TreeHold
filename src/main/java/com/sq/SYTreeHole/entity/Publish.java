@@ -27,7 +27,7 @@ public class Publish implements Serializable {
     private Date createTime;
     private Date modifyTime;
     private String author;
-    private Integer mark;
+    private Double mark;
     private Integer visits;
     private Integer star;
     private Integer commentsNumber;
