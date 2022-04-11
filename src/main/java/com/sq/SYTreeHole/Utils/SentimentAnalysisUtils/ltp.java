@@ -16,7 +16,7 @@ public class ltp {
 	// webapi接口地址
 	private static final String WEBTTS_URL = "https://ltpapi.xfyun.cn/v2/sa";
 	// 应用ID
-	private static final String APPID = "ab6fc10a";
+	private static final String APPID = "";
 	// 接口密钥
 	private static final String API_KEY = "";
 
