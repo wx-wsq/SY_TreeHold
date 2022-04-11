@@ -1,10 +1,6 @@
 package com.sq.SYTreeHole;
 
-import com.sq.SYTreeHole.Utils.RedisUtils;
-import com.sq.SYTreeHole.dao.publishDao.PublishDetailMapper;
-import com.sq.SYTreeHole.entity.Publish;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.connection.RedisClusterConnection;
 import org.springframework.data.redis.core.RedisTemplate;
