@@ -7,6 +7,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.tomcat.util.codec.binary.Base64;
 
 
@@ -17,16 +19,20 @@ public class ltp {
 	private static final String APPID = "ab6fc10a";
 	// 接口密钥
 	private static final String API_KEY = "4c27a475894621e0e73328c8c2f15d75";
-	// 文本
-	private static final String TEXT = "喜欢你";
 
 	private static final String TYPE = "dependent";
 
-	public static void main(String[] args) {
-		System.out.println(TEXT.length());
+	public static Map<String,String> getMarkToMap(String text) {
 		Map<String, String> header = buildHttpHeader();
-		String result = HttpUtil.doPost(WEBTTS_URL, header, "text=" + URLEncoder.encode(TEXT, StandardCharsets.UTF_8));
-		System.out.println("itp 接口调用结果：" + result);
+		ObjectMapper objectMapper = new ObjectMapper();
+		String result =  HttpUtil.doPost(WEBTTS_URL, header, "text=" + URLEncoder.encode(text, StandardCharsets.UTF_8));
+		try {
+			System.out.println(objectMapper.readValue(result, Map.class).entrySet());
+			return objectMapper.readValue(result, Map.class);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/**
