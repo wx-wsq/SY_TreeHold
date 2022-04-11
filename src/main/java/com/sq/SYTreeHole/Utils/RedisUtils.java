@@ -68,8 +68,8 @@ public class RedisUtils {
 
     }
 
-    public static void setPublishListCacheOfId(String type,Serializable page, String ids) {
-        getRedisForHash().put(type, "publishPage:" + page, ids);
+    public static void setPublishListCacheOfId(String type,Serializable page, String ids, String index) {
+        getRedisForHash().put(type, "publishPage:" + page+",index:"+index, ids);
     }
 
     public static void clearPublishListCacheOfId(String type){
