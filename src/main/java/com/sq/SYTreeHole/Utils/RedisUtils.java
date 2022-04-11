@@ -58,7 +58,7 @@ public class RedisUtils {
                 (Date) getRedisForHash().get("publish:" + id, "createTime"),
                 (Date) getRedisForHash().get("publish:" + id, "modifyTime"),
                 (String) getRedisForHash().get("publish:" + id, "author"),
-                (Integer) getRedisForHash().get("publish:" + id, "mark"),
+                (Double) getRedisForHash().get("publish:" + id, "mark"),
                 (Integer) getRedisForHash().get("publish:" + id, "visits"),
                 (Integer) getRedisForHash().get("publish:" + id, "star"),
                 (Integer) getRedisForHash().get("publish:" + id, "commentsNumber"),

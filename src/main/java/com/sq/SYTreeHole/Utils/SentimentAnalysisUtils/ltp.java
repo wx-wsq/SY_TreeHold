@@ -18,7 +18,7 @@ public class ltp {
 	// 应用ID
 	private static final String APPID = "ab6fc10a";
 	// 接口密钥
-	private static final String API_KEY = "4c27a475894621e0e73328c8c2f15d75";
+	private static final String API_KEY = "";
 
 	private static final String TYPE = "dependent";
 
