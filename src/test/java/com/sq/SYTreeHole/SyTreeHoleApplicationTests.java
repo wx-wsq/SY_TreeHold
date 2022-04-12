@@ -39,4 +39,9 @@ class SyTreeHoleApplicationTests {
         }
     }
 
+    @Test
+    void clearAll(){
+        redisTemplate.getRequiredConnectionFactory().getClusterConnection().flushAll();
+    }
+
 }
