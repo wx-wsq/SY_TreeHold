@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sq.SYTreeHole.Utils.RedisUtils;
+import com.sq.SYTreeHole.Utils.SentimentAnalysisUtils.EmotionalAnalysis;
 import com.sq.SYTreeHole.dao.publishDao.PublishImagesMapper;
 import com.sq.SYTreeHole.dao.publishDao.PublishManagementMapper;
 import com.sq.SYTreeHole.entity.Publish;
@@ -12,18 +13,17 @@ import com.sq.SYTreeHole.entity.PublishImages;
 import com.sq.SYTreeHole.exception.ManagementPublishException;
 import com.sq.SYTreeHole.service.publishService.PublishManagementService;
 import org.apache.logging.log4j.util.Strings;
+import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @SuppressWarnings("all")
@@ -34,15 +34,17 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
 
     @Transactional
     @Override
-    public boolean insert(Publish publish, MultipartHttpServletRequest multipartHttpServletRequest) {
+    public boolean insert(Publish publish, HttpServletRequest httpServletRequest) {
         if (Objects.isNull(publish) || Strings.isBlank(publish.getUserId()) || Strings.isBlank(publish.getText()))
             throw new ManagementPublishException("空参异常");
+        double mark = reckonMark(publish);
+        publish.setMark(mark);
         if (save(publish)) {
-            List<MultipartFile> images = multipartHttpServletRequest.getFiles("images");
-            saveImages(images, publish);
+            if (ServletFileUpload.isMultipartContent(httpServletRequest)) {
+                List<MultipartFile> images = ((MultipartHttpServletRequest) httpServletRequest).getFiles("images");
+                saveImages(images, publish);
+            }
             RedisUtils.setPublishCache(publish);
-            RedisUtils.clearPublishListCacheOfId("publishAll");
-            RedisUtils.clearPublishListCacheOfId("publishHot");
             return true;
         } else
             throw new ManagementPublishException("新增失败");
@@ -50,7 +52,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
 
     @Transactional
     @Override
-    public boolean modify(Publish publish, MultipartHttpServletRequest multipartHttpServletRequest) {
+    public boolean modify(Publish publish, HttpServletRequest httpServletRequest) {
         if (Objects.isNull(publish) || Strings.isBlank(publish.getUserId()))
             throw new ManagementPublishException("空参异常");
         QueryWrapper<Publish> queryWrapper = new QueryWrapper<>();
@@ -59,15 +61,18 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
                 .eq("user_id", publish.getUserId());
         if (Objects.isNull(getOne(queryWrapper)))
             throw new ManagementPublishException("系统错误...");
+        double mark = reckonMark(publish);
+        publish.setMark(mark);
         if (updateById(publish)) {
             RedisUtils.setPublishCache(publish);
             RedisUtils.delPublishImageCache(publish.getId());
-            if (Objects.nonNull(multipartHttpServletRequest.getFiles("images"))) {
+            if (ServletFileUpload.isMultipartContent(httpServletRequest)) {
                 QueryWrapper<PublishImages> publishImagesQueryWrapper = new QueryWrapper<>();
                 publishImagesQueryWrapper.eq("publish_id", publish.getId());
                 List<PublishImages> publishImages = publishImagesMapper.selectList(publishImagesQueryWrapper);
                 publishImagesMapper.deleteBatchIds(publishImages);
-                List<MultipartFile> multipartFiles = multipartHttpServletRequest.getFiles("images");
+                delImages(publishImages);
+                List<MultipartFile> multipartFiles = ((MultipartHttpServletRequest) httpServletRequest).getFiles("images");
                 saveImages(multipartFiles, publish);
             }
             return true;
@@ -87,14 +92,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
             publishImagesQueryWrapper.eq("publish_id", publishId);
             List<PublishImages> publishImages = publishImagesMapper.selectList(publishImagesQueryWrapper);
             publishImagesMapper.delete(publishImagesQueryWrapper);
-            for (PublishImages publishImage : publishImages) {
-                //TODO 更改路径
-                File file = new File("D:/image/" + publishImage.getSaveName());
-                if (file.exists())
-                    file.delete();
-            }
-            RedisUtils.clearPublishListCacheOfId("publishAll");
-            RedisUtils.clearPublishListCacheOfId("publishHot");
+            delImages(publishImages);
             RedisUtils.delPublishCache(publishId);
             RedisUtils.delPublishImageCache(publishId);
             return true;
@@ -155,5 +153,30 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
                             .setUrl("http://localhost/image/" + saveName)
                             .setPublishId(publish.getId()));
         }
+    }
+
+    private void delImages(List<PublishImages> publishImages) {
+        for (PublishImages publishImage : publishImages) {
+            //TODO 更改路径
+            File file = new File("D:/image/" + publishImage.getSaveName());
+            if (file.exists())
+                file.delete();
+        }
+    }
+
+    private double reckonMark(Publish publish) {
+        int length = publish.getText().length();
+        double mark = 0.6;
+        if (length > 100) {
+            Map<Object, Object> markToMapStart = EmotionalAnalysis.getMarkToMap(publish.getText().substring(0, 100));
+            Map<Object, Object> markToMapLast = EmotionalAnalysis.getMarkToMap(publish.getText().substring(length - 100, length));
+            double mark1 = Math.round(((Map<String, Double>) markToMapStart.get("data")).get("score") * 100) / 100.0;
+            double mark2 = Math.round(((Map<String, Double>) markToMapLast.get("data")).get("score") * 100) / 100.0;
+            mark = (mark1 + mark2) / 2;
+        } else {
+            Map<Object, Object> markToMap = EmotionalAnalysis.getMarkToMap(publish.getText());
+            mark = Math.round(((Map<String, Double>) markToMap.get("data")).get("score") * 100) / 100.0;
+        }
+        return mark;
     }
 }
