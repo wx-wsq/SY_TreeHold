@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface EmotionalAnalysisService {
 
-    Integer lastMark(String userId);
+    Double lastMark(String userId);
 
     List<Publish> allMark(String userId);
 

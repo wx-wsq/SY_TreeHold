@@ -40,6 +40,7 @@ public class SaveCache {
                     if (matcher.find()) {
                         Publish publish = RedisUtils.getPublishCache(key.substring(key.length() - 1));
                         publishDetailMapper.updateById(publish);
+                        RedisUtils.delPublishCache(key.substring(key.length() - 1));
                     }
                 }
             }

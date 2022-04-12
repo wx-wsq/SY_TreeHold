@@ -13,7 +13,7 @@ public class EmotionalAnalysisServiceImpl extends ServiceImpl<EmotionalAnalysisM
 
 
     @Override
-    public Integer lastMark(String userId) {
+    public Double lastMark(String userId) {
         return getById(userId).getMark();
     }
 
