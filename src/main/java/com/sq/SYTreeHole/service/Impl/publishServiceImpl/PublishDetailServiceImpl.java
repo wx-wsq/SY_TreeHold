@@ -13,7 +13,6 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,8 +23,8 @@ public class PublishDetailServiceImpl extends ServiceImpl<PublishDetailMapper, P
     private PublishImagesMapper publishImagesMapper;
 
     @Override
-    public Publish detail(Serializable publishId) {
-        if (Strings.isBlank((String) publishId))
+    public Publish detail(String publishId) {
+        if (Strings.isBlank(publishId))
             throw new PublishDetailException("空参异常");
         Publish publishCache = RedisUtils.getPublishCache(publishId);
         if (Objects.isNull(publishCache.getId())) {

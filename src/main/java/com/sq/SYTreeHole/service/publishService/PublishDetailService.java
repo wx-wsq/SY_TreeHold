@@ -12,7 +12,7 @@ public interface PublishDetailService {
      * @param publishId 发表ID
      * @return 发表实体
      */
-    Publish detail(Serializable publishId);
+    Publish detail(String publishId);
 
     /**
      * 获取发表详情页中的图片

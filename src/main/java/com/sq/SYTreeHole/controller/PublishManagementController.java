@@ -7,11 +7,8 @@ import com.sq.SYTreeHole.entity.Publish;
 import com.sq.SYTreeHole.entity.PublishImages;
 import com.sq.SYTreeHole.exception.ManagementPublishException;
 import com.sq.SYTreeHole.service.publishService.PublishManagementService;
-import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +33,8 @@ public class PublishManagementController {
     }
 
     @PostMapping("/publishModify")
-    public Result<?> modify(Publish publish, HttpServletRequest multipartHttpServletRequest) {
-        boolean isModify = publishManagementService.modify(publish, multipartHttpServletRequest);
+    public Result<?> modify(Publish publish, HttpServletRequest httpServletRequest) {
+        boolean isModify = publishManagementService.modify(publish, httpServletRequest);
         if (isModify)
             return new Result<>(Constants.CODE_200, "修改成功！", null);
         else
