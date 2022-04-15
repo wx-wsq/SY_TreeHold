@@ -46,6 +46,8 @@ public class RedisUtils {
     }
 
     public static void setPublishCache(Publish publish) {
+        if(!enable)
+            return;
         getRedisForHash().put("publish:" + publish.getId(), "id", publish.getId());
         getRedisForHash().put("publish:" + publish.getId(), "userId", publish.getUserId());
         getRedisForHash().put("publish:" + publish.getId(), "title", publish.getTitle());
@@ -85,10 +87,14 @@ public class RedisUtils {
     }
 
     public static void setPublishListCacheOfId(String type,Serializable page, String ids, String index) {
+        if(!enable)
+            return;
         getRedisForHash().put(type, "publishPage:" + page+",index:"+index, ids);
     }
 
     public static void clearPublishListCacheOfId(String type){
+        if(!enable)
+            return;
         redisTemplate
                 .getRequiredConnectionFactory()
                 .getClusterConnection()
@@ -96,19 +102,27 @@ public class RedisUtils {
     }
 
     public static void clearAll(){
+        if(!enable)
+            return;
         redisTemplate.getRequiredConnectionFactory().getClusterConnection().flushAll();
     }
 
     public static void delPublishCache(Serializable publishId){
+        if(!enable)
+            return;
         redisTemplate.delete("publish:"+publishId);
     }
 
     public static void setPublishListCache(List<Publish> publishes){
+        if(!enable)
+            return;
         publishes.forEach(RedisUtils::setPublishCache);
     }
 
     public static List<Publish> getPublishListCache(String type,Serializable page) {
         List<Publish> list = new ArrayList<>();
+        if(!enable)
+            return list;
         String hotString = ((String) getRedisForHash().get(type, "publishPage:" + page));
         if(Strings.isBlank(hotString))
             return list;
@@ -120,23 +134,33 @@ public class RedisUtils {
     }
 
     public static void incrPublishVisits(Publish publish) {
+        if(!enable)
+            return;
         getRedisForHash().put("publish:" + publish.getId(), "visits", publish.getVisits() + 1);
     }
 
     public static void publishStar(Publish publish,Integer IOrD) {
+        if(!enable)
+            return;
         getRedisForHash().put("publish:" + publish.getId(), "star", publish.getStar()+IOrD);
     }
 
     public static void setPublishImagesCache(List<PublishImages> images){
+        if(!enable)
+            return;
         if(images.size()>0)
             getRedisForObject().set("imageForPublishId:"+images.get(0).getPublishId(),images);
     }
     @SuppressWarnings("all")
     public static List<PublishImages> getPublishImageCache(String publishId){
+        if(!enable)
+            return null;
         return (List<PublishImages>)getRedisForObject().get("imageForPublishId:"+publishId);
     }
 
     public static void delPublishImageCache(String publishId){
+        if(!enable)
+            return;
         redisTemplate
                 .getRequiredConnectionFactory()
                 .getClusterConnection()

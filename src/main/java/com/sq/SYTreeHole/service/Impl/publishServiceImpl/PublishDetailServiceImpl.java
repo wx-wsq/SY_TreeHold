@@ -33,7 +33,10 @@ public class PublishDetailServiceImpl extends ServiceImpl<PublishDetailMapper, P
                 return null;
             }
             publish.setVisits(publish.getVisits() + 1);
-            RedisUtils.setPublishCache(publish);
+            if(RedisUtils.isEnable())
+                RedisUtils.setPublishCache(publish);
+            else
+                updateById(publish);
             return publish;
         } else {
             if (Objects.nonNull(publishCache.getVisits()))
@@ -72,7 +75,10 @@ public class PublishDetailServiceImpl extends ServiceImpl<PublishDetailMapper, P
                 publish.setStar(0);
             }
             publish.setStar(publish.getStar() + IOrD);
-            RedisUtils.setPublishCache(publish);
+            if(RedisUtils.isEnable())
+                RedisUtils.setPublishCache(publish);
+            else
+                updateById(publish);
         } else {
             RedisUtils.publishStar(publishCache, IOrD);
         }
