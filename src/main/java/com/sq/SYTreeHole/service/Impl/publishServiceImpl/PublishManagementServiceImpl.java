@@ -164,7 +164,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
     }
 
     private double reckonMark(Publish publish) {
-        publish.setText(publish.getText().replaceAll("[A-Za-z]",""));
+        publish.setText(publish.getText().replaceAll("[A-Za-z0-9]",""));
         if(publish.getText().length() == 0)
             return 0.6;
         int length = publish.getText().length();
