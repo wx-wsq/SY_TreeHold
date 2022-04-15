@@ -34,8 +34,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import java.time.Duration;
 import java.util.ArrayList;
 
-@EnableCaching
 @Configuration
+@EnableCaching
 @EnableSwagger2
 @EnableWebMvc
 @EnableScheduling

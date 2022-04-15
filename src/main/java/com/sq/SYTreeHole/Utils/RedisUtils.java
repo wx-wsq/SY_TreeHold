@@ -3,7 +3,10 @@ package com.sq.SYTreeHole.Utils;
 import com.sq.SYTreeHole.entity.Publish;
 import com.sq.SYTreeHole.entity.PublishImages;
 import com.sq.SYTreeHole.entity.User;
+import lombok.Data;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -15,7 +18,18 @@ import java.util.Date;
 import java.util.List;
 
 @Component
+@ConfigurationProperties(prefix = "my-redis-cache-config")
 public class RedisUtils {
+
+    private static boolean enable;
+
+    public static boolean isEnable() {
+        return enable;
+    }
+
+    public static void setEnable(boolean enable) {
+        RedisUtils.enable = enable;
+    }
 
     private static RedisTemplate<String, Object> redisTemplate;
 
@@ -50,6 +64,8 @@ public class RedisUtils {
     }
 
     public static Publish getPublishCache(Serializable id) {
+        if(!enable)
+            return new Publish();
         return new Publish(
                 (String) getRedisForHash().get("publish:" + id, "id"),
                 (String) getRedisForHash().get("publish:" + id, "userId"),
