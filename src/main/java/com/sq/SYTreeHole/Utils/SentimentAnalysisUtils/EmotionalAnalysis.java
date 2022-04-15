@@ -1,5 +1,6 @@
 package com.sq.SYTreeHole.Utils.SentimentAnalysisUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -26,7 +27,12 @@ public class EmotionalAnalysis {
 	public static Map<Object,Object> getMarkToMap(String text) {
 		Map<String, String> header = buildHttpHeader();
 		ObjectMapper objectMapper = new ObjectMapper();
-		String result =  HttpUtil.doPost(WEBTTS_URL, header, "text=" + URLEncoder.encode(text, StandardCharsets.UTF_8));
+		String result = null;
+		try {
+			result = HttpUtil.doPost(WEBTTS_URL, header, "text=" + URLEncoder.encode(text, String.valueOf(StandardCharsets.UTF_8)));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		try {
 			return objectMapper.readValue(result, Map.class);
 		} catch (JsonProcessingException e) {
