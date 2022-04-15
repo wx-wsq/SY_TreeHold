@@ -2,7 +2,6 @@ package com.sq.SYTreeHole.service.publishService;
 
 import com.sq.SYTreeHole.entity.Publish;
 import com.sq.SYTreeHole.entity.PublishImages;
-import java.io.Serializable;
 import java.util.List;
 
 public interface PublishDetailService {
@@ -25,5 +24,5 @@ public interface PublishDetailService {
      * 点赞(取消赞)
      * @param publishId 发表ID
      */
-    void star(Serializable publishId,Integer IOrD);
+    void star(String publishId,Integer IOrD);
 }
