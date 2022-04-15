@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 @Component
+@Data
 @ConfigurationProperties(prefix = "my-redis-cache-config")
 public class RedisUtils {
 
