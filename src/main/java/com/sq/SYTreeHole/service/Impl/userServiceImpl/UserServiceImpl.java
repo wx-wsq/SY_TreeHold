@@ -82,7 +82,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public User loginForCode(String username, String code) {
         if (Strings.isBlank(username) || Strings.isBlank(code))
             throw new LoginException("空参异常");
-        if (equalsCode(username, code))
+        if (equalsNotCode(username, code))
             throw new LoginException("验证码错误");
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper
@@ -113,7 +113,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public boolean register(User user, String code) {
         if (Objects.isNull(user) || Strings.isBlank(user.getUsername()) || Strings.isBlank(user.getPassword()))
             throw new LoginException("空参异常");
-        if (equalsCode(user.getUsername(), code))
+        if (equalsNotCode(user.getUsername(), code))
             throw new LoginException("验证码错误");
         else {
             user.setPassword(SHA256Utils.encode(user.getPassword()));
@@ -137,7 +137,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new LoginException("验证码获取失败....redis错误");
     }
 
-    private boolean equalsCode(String username, String code) {
+    private boolean equalsNotCode(String username, String code) {
         String cacheCode = (String) RedisUtils.getRedisForObject().get(username + ":code");
         return !code.equals(cacheCode);
     }
