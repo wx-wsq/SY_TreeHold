@@ -9,8 +9,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,8 +18,7 @@ public class EmotionalAnalysisServiceImpl extends ServiceImpl<EmotionalAnalysisM
     public Double lastMark(String userId) {
         if (Strings.isBlank(userId))
             throw new EmotionalAnalysisException("空参异常");
-        else
-            return getBaseMapper().lastMark(userId);
+        return getBaseMapper().lastMark(userId) *100;
     }
 
     @Override
@@ -31,7 +29,7 @@ public class EmotionalAnalysisServiceImpl extends ServiceImpl<EmotionalAnalysisM
                 .allMarkForLineChart(userId)
                 .stream()
                 .map(v ->
-                        (v.setId(String.valueOf((System.currentTimeMillis() - v.getModifyTime().getTime()) / (24 * 60 * 60 * 1000)))))
+                        v.setId(String.valueOf((System.currentTimeMillis() - v.getModifyTime().getTime()) / (24 * 60 * 60 * 1000))))
                 .collect(Collectors.toList());
         for (int i = 0; i < publishes.size(); i++)
             for (int j = i + 1; j < publishes.size(); j++)
@@ -47,11 +45,19 @@ public class EmotionalAnalysisServiceImpl extends ServiceImpl<EmotionalAnalysisM
     }
 
     @Override
-    public Map<Serializable, Serializable> allMarkForPieChart(String userId) {
+    public Map<? extends Serializable, ? extends Serializable> allMarkForPieChart(String userId) {
         if (Strings.isBlank(userId))
             throw new EmotionalAnalysisException("空参异常");
-        else
-            return null;
+        List<Publish> publishes = getBaseMapper().allMarkForPieChart(userId);
+        HashMap<String, Double> result = new HashMap<>();
+        for (Publish publish : publishes) {
+            if (result.containsKey(publish.getId()))
+                result.put(publish.getId(), result.get(publish.getId()) + 1);
+            else
+                result.put(publish.getId(), 1.0);
+        }
+        result.replaceAll((s, v) -> v / publishes.size());
+        return result;
     }
 
 

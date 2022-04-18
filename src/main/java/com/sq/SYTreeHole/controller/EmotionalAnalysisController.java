@@ -1,5 +1,6 @@
 package com.sq.SYTreeHole.controller;
 
+import com.sq.SYTreeHole.DTO.EmotionalAnalysisDTO;
 import com.sq.SYTreeHole.common.Constants;
 import com.sq.SYTreeHole.common.Result;
 import com.sq.SYTreeHole.service.emotionalAnalysisService.EmotionalAnalysisService;
@@ -20,7 +21,15 @@ public class EmotionalAnalysisController {
 
     @GetMapping("/EA/{userId}")
     public Result<?> emotionalAnalysisAll(@PathVariable String userId){
-        Map<? extends Serializable, ? extends Serializable> stringStringMap = ea.allMarkForLineChart(userId);
-        return new Result<>(Constants.CODE_200,"请求成功",stringStringMap);
+        Double mark = ea.lastMark(userId);
+        Map<? extends Serializable, ? extends Serializable> allMarkForLineChart = ea.allMarkForLineChart(userId);
+        Map<? extends Serializable, ? extends Serializable> allMarkForPieChart = ea.allMarkForPieChart(userId);
+        EmotionalAnalysisDTO emotionalAnalysisDTO = new EmotionalAnalysisDTO();
+        emotionalAnalysisDTO
+                .setMark(mark)
+                .setLineChartData(allMarkForLineChart)
+                .setPieChartData(allMarkForPieChart);
+        return new Result<>(Constants.CODE_200,"请求成功",emotionalAnalysisDTO);
     }
+
 }
