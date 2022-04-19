@@ -38,10 +38,9 @@ public class EmotionalAnalysisServiceImpl extends ServiceImpl<EmotionalAnalysisM
                             .get(i)
                             .setMark((publishes.get(i).getMark() + publishes.get(j).getMark()) / 2);
                     publishes.remove(i--);
-                    if(i == -1)
-                        i=0;
                     publishes.remove(--j);
                     publishes.add(publish);
+                    if(i == -1) i=0;
                 }
         return publishes.stream().collect(Collectors.toMap(Publish::getId, Publish::getMark));
     }
