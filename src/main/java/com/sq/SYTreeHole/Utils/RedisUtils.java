@@ -28,10 +28,6 @@ public class RedisUtils {
         return enable;
     }
 
-    public static void setEnable(boolean enable) {
-        RedisUtils.enable = enable;
-    }
-
     private static RedisTemplate<String, Object> redisTemplate;
 
     public RedisUtils(RedisTemplate<String, Object> redisTemplate) {
