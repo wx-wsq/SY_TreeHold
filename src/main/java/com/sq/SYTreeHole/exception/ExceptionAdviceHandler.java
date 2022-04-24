@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Slf4j
 @ResponseBody
-@ControllerAdvice
+//@ControllerAdvice
 public class ExceptionAdviceHandler extends Exception{
 
     @ExceptionHandler(PowerException.class)
