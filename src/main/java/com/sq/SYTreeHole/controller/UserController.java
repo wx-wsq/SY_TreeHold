@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
@@ -25,8 +26,8 @@ public class UserController {
     }
 
     @GetMapping("/user/{id}")
-    public User getUserData(@PathVariable String id) {
-        return loginService.getUserData(id);
+    public Result<?> getUserData(@PathVariable String id) {
+        return new Result<>(Constants.CODE_200, "访问成功", loginService.getUserData(id));
     }
 
     @PostMapping("/setUserData")
@@ -66,7 +67,7 @@ public class UserController {
 
     @PostMapping("/register")
     public LoginDTO register(User user, String code) {
-        System.out.println(user+"::::"+code);
+        System.out.println(user + "::::" + code);
         if (loginService.register(user, code)) {
             if (Objects.isNull(loginService.loginForPass(user.getUsername(), user.getPassword())))
                 throw new LoginException("服务器异常");
