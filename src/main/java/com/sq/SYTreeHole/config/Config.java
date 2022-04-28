@@ -106,10 +106,10 @@ public class Config {
         return new WebMvcConfigurer() {
             @Override
             public void addInterceptors(InterceptorRegistry registry) {
-//                registry
-//                        .addInterceptor(new JwtInterceptor())
-//                        .addPathPatterns("/**")
-//                        .excludePathPatterns("/loginForPass", "/loginForCode", "/register", "/code", "/resetPassword")
+                registry
+                        .addInterceptor(new JwtInterceptor())
+                        .addPathPatterns("/**")
+                        .excludePathPatterns("/loginForPass", "/loginForCode", "/register", "/code", "/resetPassword");
 //                        .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**", "/swagger-ui.html", "/csrf", "/");
                 registry.addInterceptor(new ErrorInterceptor())
                         .addPathPatterns("/**")
@@ -119,7 +119,8 @@ public class Config {
             public void addResourceHandlers(ResourceHandlerRegistry registry) {
                 registry.addResourceHandler("/swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
                 registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
-                registry.addResourceHandler("/images/**").addResourceLocations("file:D:/images/");
+                registry.addResourceHandler("/images/**").addResourceLocations("/usr/images/");
+                registry.addResourceHandler("/head/**").addResourceLocations("/usr/images/heads");
             }
         };
     }

@@ -60,7 +60,4 @@ public class EmotionalAnalysisServiceImpl extends ServiceImpl<EmotionalAnalysisM
         result.replaceAll((s, v) -> v / publishes.size());
         return result;
     }
-
-
-    //TODO 追加...
 }

@@ -18,7 +18,7 @@ public interface PublishMapper extends BaseMapper<Publish> {
             "                                   IF(#{index}=1,mark between 0 and 0.299," +
             "                                       IF(#{index}=2,mark between 0.3 and 0.499," +
             "                                           IF(#{index}=3,mark between 0.5 and 0.699," +
-            "                                               IF(#{index}=4,mark between 0.7 and 1, mark<0))))) order by modify_time DESC limit #{start}, #{end}")
+            "                                               IF(#{index}=4,mark between 0.7 and 1, mark<0))))) and anonymity=0 order by modify_time DESC limit #{start}, #{end}")
     List<Publish> publishesAsTime(@Param("start") Serializable start, @Param("end") Serializable end, @Param("index") Serializable index);
 
 
@@ -31,7 +31,8 @@ public interface PublishMapper extends BaseMapper<Publish> {
             "                                   IF(#{index}=1,mark between 0 and 0.299," +
             "                                       IF(#{index}=2,mark between 0.3 and 0.499," +
             "                                           IF(#{index}=3,mark between 0.5 and 0.699," +
-            "                                               IF(#{index}=4,mark between 0.7 and 1, mark<0))))) order by (visits+th_publish.star*3+th_publish.comments_number*6)/10 DESC limit #{start}, #{end}")
+            "                                               IF(#{index}=4,mark between 0.7 and 1, mark<0))))) and anonymity=0 " +
+            "                                                   order by (visits+th_publish.star*3+th_publish.comments_number*6)/10 DESC limit #{start}, #{end}")
     List<Publish> publishesAsHot(@Param("start") Serializable start, @Param("end") Serializable end, @Param("index") Serializable index);
 
     //TODO 可能追加

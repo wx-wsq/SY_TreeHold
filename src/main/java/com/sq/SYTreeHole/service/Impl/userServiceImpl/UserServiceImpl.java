@@ -17,6 +17,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Random;
@@ -47,14 +49,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             else
                 headImageName = user.getHeadUrl().substring(user.getHeadUrl().lastIndexOf("/"));
             try {
-                //TODO 更改路径
-                head.transferTo(new File("D:/images/heads/" + headImageName));
+                head.transferTo(new File("/usr/images/heads/" + headImageName));
             } catch (IOException e) {
                 e.printStackTrace();
                 throw new RuntimeException("头像保存失败...");
             }
-            //TODO 更改映射路径
-            user.setHeadUrl("http:/localhost/image/" + headImageName);
+            try {
+                user.setHeadUrl("http:/"+ InetAddress.getLocalHost().getHostAddress()+"/images/" + headImageName);
+            } catch (UnknownHostException e) {
+                throw new RuntimeException(e);
+            }
         }
         return update(user, queryWrapper);
     }

@@ -8,6 +8,8 @@ import com.sq.SYTreeHole.Utils.RedisUtils;
 import com.sq.SYTreeHole.Utils.SentimentAnalysisUtils.EmotionalAnalysis;
 import com.sq.SYTreeHole.dao.publishDao.PublishImagesMapper;
 import com.sq.SYTreeHole.dao.publishDao.PublishManagementMapper;
+import com.sq.SYTreeHole.dao.publishDao.commentsDao.CommentsMapper;
+import com.sq.SYTreeHole.entity.Comment;
 import com.sq.SYTreeHole.entity.Publish;
 import com.sq.SYTreeHole.entity.PublishImages;
 import com.sq.SYTreeHole.exception.ManagementPublishException;
@@ -22,6 +24,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.*;
 
 @Service
@@ -30,6 +34,9 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
 
     @Resource
     private PublishImagesMapper publishImagesMapper;
+
+    @Resource
+    private CommentsMapper commentsMapper;
 
     @Transactional
     @Override
@@ -91,6 +98,9 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
             publishImagesQueryWrapper.eq("publish_id", publishId);
             List<PublishImages> publishImages = publishImagesMapper.selectList(publishImagesQueryWrapper);
             publishImagesMapper.delete(publishImagesQueryWrapper);
+            QueryWrapper<Comment> commentQueryWrapper = new QueryWrapper<>();
+            commentQueryWrapper.eq("publish_id",publishId);
+            commentsMapper.delete(commentQueryWrapper);
             delImages(publishImages);
             RedisUtils.delPublishCache(publishId);
             RedisUtils.delPublishImageCache(publishId);
@@ -134,8 +144,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
             assert imageName != null;
             String suffix = imageName.substring(imageName.lastIndexOf('.'));
             String saveName = UUID.randomUUID() + suffix;
-            //TODO 更改路径
-            File file = new File("D:/images/" + saveName);
+            File file = new File("/usr/images/" + saveName);
             File path = new File(file.getParent());
             if (!path.exists())
                 path.mkdir();
@@ -145,19 +154,21 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
                 e.printStackTrace();
                 throw new RuntimeException("文件保存失败...");
             }
-            publishImagesMapper.insert(
-                    //TODO 保存地址需更改
-                    new PublishImages()
-                            .setSaveName(file.getName())
-                            .setUrl("http://localhost/images/" + saveName)
-                            .setPublishId(publish.getId()));
+            try {
+                publishImagesMapper.insert(
+                        new PublishImages()
+                                .setSaveName(file.getName())
+                                .setUrl("http://"+ InetAddress.getLocalHost().getHostAddress() +"/images/" + saveName)
+                                .setPublishId(publish.getId()));
+            } catch (UnknownHostException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
     private void delImages(List<PublishImages> publishImages) {
         for (PublishImages publishImage : publishImages) {
-            //TODO 更改路径
-            File file = new File("D:/images/" + publishImage.getSaveName());
+            File file = new File("/usr/images/" + publishImage.getSaveName());
             if (file.exists())
                 file.delete();
         }

@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.sq.SYTreeHole.Utils.RedisUtils;
 import com.sq.SYTreeHole.dao.publishDao.commentsDao.CommentsMapper;
 import com.sq.SYTreeHole.entity.Comment;
+import com.sq.SYTreeHole.entity.Publish;
 import com.sq.SYTreeHole.exception.CommentsException;
 import com.sq.SYTreeHole.exception.PowerException;
 import com.sq.SYTreeHole.service.publishService.comments.CommentsService;
@@ -46,14 +48,21 @@ public class CommentsServiceImpl extends ServiceImpl<CommentsMapper, Comment> im
                 || Strings.isBlank(comment.getUserId())
                 || Strings.isBlank(comment.getPublishId()))
             throw new CommentsException("空参异常");
-        else
+        else {
+            Publish publish = RedisUtils.getPublishCache(comment.getPublishId());
+            publish.setCommentsNumber(publish.getCommentsNumber()+1);
+            RedisUtils.setPublishCache(publish);
             return save(comment);
+        }
     }
 
     @CacheEvict(beforeInvocation = true, allEntries = true)
     @Override
     public void deleteComment(String commentId, String userId) {
         if (getById(commentId).getUserId().equals(userId)) {
+            Publish publish = RedisUtils.getPublishCache(userId);
+            publish.setCommentsNumber(publish.getCommentsNumber()-1);
+            RedisUtils.setPublishCache(publish);
             removeById(commentId);
         } else
             throw new PowerException("无权进行此操作");
