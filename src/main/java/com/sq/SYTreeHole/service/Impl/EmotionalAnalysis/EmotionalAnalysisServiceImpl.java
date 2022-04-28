@@ -18,7 +18,10 @@ public class EmotionalAnalysisServiceImpl extends ServiceImpl<EmotionalAnalysisM
     public Double lastMark(String userId) {
         if (Strings.isBlank(userId))
             throw new EmotionalAnalysisException("空参异常");
-        return getBaseMapper().lastMark(userId) *100;
+        Double result = getBaseMapper().lastMark(userId);
+        if(Objects.isNull(result))
+            return 0.0;
+        return result;
     }
 
     @Override
