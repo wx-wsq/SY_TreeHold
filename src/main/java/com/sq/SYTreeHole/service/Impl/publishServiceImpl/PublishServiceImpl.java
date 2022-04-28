@@ -32,7 +32,7 @@ public class PublishServiceImpl extends ServiceImpl<PublishMapper, Publish> impl
         List<Publish> publishListCacheOfAll = RedisUtils.getPublishListCache("publishAll", page);
         if (publishListCacheOfAll.size() == 0) {
             publishListCacheOfAll = getBaseMapper().publishesAsTime(pageStart, pageStart + number, index);
-            RedisUtils.setPublishListCache(publishListCacheOfAll);
+//            RedisUtils.setPublishListCache(publishListCacheOfAll);
 //            StringBuilder sb = new StringBuilder();
 //            for (Publish publish : publishListCacheOfAll) sb.append(publish.getId()).append(",");
 //            RedisUtils.setPublishListCacheOfId("publishAll", page, sb.toString());
@@ -48,7 +48,7 @@ public class PublishServiceImpl extends ServiceImpl<PublishMapper, Publish> impl
         List<Publish> publishListCacheOfHot = RedisUtils.getPublishListCache("publishHot", page);
         if (publishListCacheOfHot.size() == 0) {
             publishListCacheOfHot = getBaseMapper().publishesAsHot(pageStart, pageStart + number, index);
-            RedisUtils.setPublishListCache(publishListCacheOfHot);
+//            RedisUtils.setPublishListCache(publishListCacheOfHot);
 //            StringBuilder sb = new StringBuilder();
 //            for (Publish publish : publishListCacheOfHot) sb.append(publish.getId()).append(",");
 //            RedisUtils.setPublishListCacheOfId("publishHot", page, sb.toString());

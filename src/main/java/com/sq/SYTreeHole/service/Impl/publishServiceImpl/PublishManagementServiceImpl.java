@@ -135,7 +135,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
             String suffix = imageName.substring(imageName.lastIndexOf('.'));
             String saveName = UUID.randomUUID() + suffix;
             //TODO 更改路径
-            File file = new File("D:/image/" + saveName);
+            File file = new File("D:/images/" + saveName);
             File path = new File(file.getParent());
             if (!path.exists())
                 path.mkdir();
@@ -149,7 +149,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
                     //TODO 保存地址需更改
                     new PublishImages()
                             .setSaveName(file.getName())
-                            .setUrl("http://localhost/image/" + saveName)
+                            .setUrl("http://localhost/images/" + saveName)
                             .setPublishId(publish.getId()));
         }
     }
@@ -157,14 +157,14 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
     private void delImages(List<PublishImages> publishImages) {
         for (PublishImages publishImage : publishImages) {
             //TODO 更改路径
-            File file = new File("D:/image/" + publishImage.getSaveName());
+            File file = new File("D:/images/" + publishImage.getSaveName());
             if (file.exists())
                 file.delete();
         }
     }
 
     private double reckonMark(Publish publish) {
-        publish.setText(publish.getText().replaceAll("[A-Za-z]",""));
+        publish.setText(publish.getText().replaceAll("[A-Za-z0-9]",""));
         if(publish.getText().length() == 0)
             return 0.6;
         int length = publish.getText().length();

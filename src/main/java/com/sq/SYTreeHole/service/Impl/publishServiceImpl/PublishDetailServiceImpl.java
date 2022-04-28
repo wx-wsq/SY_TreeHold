@@ -12,7 +12,6 @@ import com.sq.SYTreeHole.service.publishService.PublishDetailService;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
-import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,13 +27,16 @@ public class PublishDetailServiceImpl extends ServiceImpl<PublishDetailMapper, P
             throw new PublishDetailException("空参异常");
         Publish publishCache = RedisUtils.getPublishCache(publishId);
         if (Objects.isNull(publishCache.getId())) {
-            Publish publish = getById(publishId);
+            Publish publish = getBaseMapper().getById(publishId);
             if (Objects.isNull(publish)) {
                 RedisUtils.setPublishCache(new Publish().setId(publishId + ""));
                 return null;
             }
             publish.setVisits(publish.getVisits() + 1);
-            RedisUtils.setPublishCache(publish);
+            if(RedisUtils.isEnable())
+                RedisUtils.setPublishCache(publish);
+            else
+                updateById(publish);
             return publish;
         } else {
             if (Objects.nonNull(publishCache.getVisits()))
@@ -61,14 +63,22 @@ public class PublishDetailServiceImpl extends ServiceImpl<PublishDetailMapper, P
     }
 
     @Override
-    public void star(Serializable publishId, Integer IOrD) {
-        if (Strings.isBlank((String) publishId))
+    public void star(String publishId, Integer IOrD) {
+        if (Strings.isBlank(publishId))
             throw new PublishDetailException("空参异常");
         Publish publishCache = RedisUtils.getPublishCache(publishId);
         if (Strings.isBlank(publishCache.getUserId())) {
-            Publish publish = getById(publishId);
+            Publish publish = getBaseMapper().getById(publishId);
+            if (Objects.isNull(publish)) {
+                publish = new Publish().setId(publishId);
+                RedisUtils.setPublishCache(publish);
+                publish.setStar(0);
+            }
             publish.setStar(publish.getStar() + IOrD);
-            RedisUtils.setPublishCache(publish);
+            if(RedisUtils.isEnable())
+                RedisUtils.setPublishCache(publish);
+            else
+                updateById(publish);
         } else {
             RedisUtils.publishStar(publishCache, IOrD);
         }

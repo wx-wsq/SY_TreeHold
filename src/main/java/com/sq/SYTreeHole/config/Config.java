@@ -34,8 +34,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import java.time.Duration;
 import java.util.ArrayList;
 
-@EnableCaching
 @Configuration
+@EnableCaching
 @EnableSwagger2
 @EnableWebMvc
 @EnableScheduling
@@ -111,9 +111,9 @@ public class Config {
 //                        .addPathPatterns("/**")
 //                        .excludePathPatterns("/loginForPass", "/loginForCode", "/register", "/code", "/resetPassword")
 //                        .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**", "/swagger-ui.html", "/csrf", "/");
-//                registry.addInterceptor(new ErrorInterceptor())
-//                        .addPathPatterns("/**")
-//                        .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**", "/swagger-ui.html");
+                registry.addInterceptor(new ErrorInterceptor())
+                        .addPathPatterns("/**")
+                        .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**", "/swagger-ui.html");
             }
 
             public void addResourceHandlers(ResourceHandlerRegistry registry) {
