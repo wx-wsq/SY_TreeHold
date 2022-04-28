@@ -44,7 +44,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         MultipartFile head = multipartHttpServletRequest.getFile("head");
         if (Objects.nonNull(head)) {
             String headImageName;
-            if (Strings.isNotBlank(user.getHeadUrl()))
+            if (Strings.isBlank(user.getHeadUrl()))
                 headImageName = UUID.randomUUID() + ".jpg";
             else
                 headImageName = user.getHeadUrl().substring(user.getHeadUrl().lastIndexOf("/"));
