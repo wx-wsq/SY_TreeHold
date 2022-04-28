@@ -64,8 +64,9 @@ public class UserController {
         }
     }
 
-    @GetMapping("/register")
+    @PostMapping("/register")
     public LoginDTO register(User user, String code) {
+        System.out.println(user+"::::"+code);
         if (loginService.register(user, code)) {
             if (Objects.isNull(loginService.loginForPass(user.getUsername(), user.getPassword())))
                 throw new LoginException("服务器异常");
