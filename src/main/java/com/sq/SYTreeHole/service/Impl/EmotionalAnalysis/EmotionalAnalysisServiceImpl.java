@@ -7,7 +7,6 @@ import com.sq.SYTreeHole.exception.EmotionalAnalysisException;
 import com.sq.SYTreeHole.service.emotionalAnalysisService.EmotionalAnalysisService;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
-
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;

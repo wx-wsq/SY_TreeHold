@@ -7,11 +7,14 @@ import com.sq.SYTreeHole.entity.Publish;
 import com.sq.SYTreeHole.entity.PublishImages;
 import com.sq.SYTreeHole.exception.ManagementPublishException;
 import com.sq.SYTreeHole.service.publishService.PublishManagementService;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -50,7 +53,13 @@ public class PublishManagementController {
             throw new ManagementPublishException("服务器异常删除失败");
     }
 
-    @PostMapping("publishGet")
+    @GetMapping("/countMyPublish")
+    public Result<?> countMyPublish(String userId) {
+        Map<String, Object> map = publishManagementService.countMyPublish(userId);
+        return new Result<>(Constants.CODE_200, "请求成功", map);
+    }
+
+    @PostMapping("/publishGet")
     public Result<?> selectMy(String userId, String page, String index) {
         List<Publish> publishList = publishManagementService.selectMyPublish(userId, page, index);
         if (publishList.size() == 0)

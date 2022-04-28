@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 public interface PublishManagementService {
 
@@ -15,6 +16,8 @@ public interface PublishManagementService {
     boolean modify(Publish publish, HttpServletRequest multipartHttpServletRequest);
 
     boolean delete(String publishId, String userId);
+
+    Map<String, Object> countMyPublish(String userId);
 
     List<Publish> selectMyPublish(String userId, String page, String index);
 

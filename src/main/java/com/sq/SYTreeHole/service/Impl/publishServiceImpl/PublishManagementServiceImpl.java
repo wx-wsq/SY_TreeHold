@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @SuppressWarnings("all")
@@ -107,6 +108,24 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
             return true;
         } else
             return false;
+    }
+
+    @Override
+    public Map<String,Object> countMyPublish(String userId){
+        if(Strings.isBlank(userId))
+            throw new ManagementPublishException("空参异常");
+        QueryWrapper<Publish> queryWrapper = new QueryWrapper<>();
+        queryWrapper
+                .eq("user_id",userId)
+                .groupBy("anonymity")
+                .select("count(id) as result");
+        List<Map<String, Object>> maps = listMaps(queryWrapper);
+        HashMap<String, Object> map = new HashMap<>();
+        String[] keys = new String[]{"count","anonymity"};
+        for (int i = 0; i < maps.size(); i++)
+            map.put(keys[i],maps.get(i).get("result"));
+        map.put("count",(Long)map.get("anonymity")+(Long)map.get("count"));
+        return map;
     }
 
     @Override
