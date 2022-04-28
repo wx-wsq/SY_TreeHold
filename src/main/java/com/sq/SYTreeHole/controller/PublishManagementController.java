@@ -51,8 +51,8 @@ public class PublishManagementController {
     }
 
     @PostMapping("publishGet")
-    public Result<?> selectMy(String userId, String page) {
-        List<Publish> publishList = publishManagementService.selectMyPublish(userId, page);
+    public Result<?> selectMy(String userId, String page, String index) {
+        List<Publish> publishList = publishManagementService.selectMyPublish(userId, page, index);
         if (publishList.size() == 0)
             return new Result<>(Constants.CODE_200, "无数据", null);
         List<List<PublishImages>> imageList = publishManagementService.selectMyPublishImage(publishList);

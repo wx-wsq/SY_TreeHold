@@ -16,7 +16,7 @@ public interface PublishManagementService {
 
     boolean delete(String publishId, String userId);
 
-    List<Publish> selectMyPublish(String userId, String page);
+    List<Publish> selectMyPublish(String userId, String page, String index);
 
     List<List<PublishImages>> selectMyPublishImage(List<Publish> publishes);
 

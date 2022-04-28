@@ -110,11 +110,13 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
     }
 
     @Override
-    public List<Publish> selectMyPublish(String userId, String page) {
-        if (Strings.isBlank(userId) || Strings.isBlank(page))
+    public List<Publish> selectMyPublish(String userId, String page, String index) {
+        if (Strings.isBlank(userId) || Strings.isBlank(page) || Strings.isBlank(index))
             throw new ManagementPublishException("空参异常");
         IPage<Publish> iPage = new Page<>(Long.parseLong(page), 10);
         QueryWrapper<Publish> queryWrapper = new QueryWrapper<>();
+        if(!index.equals("2"))
+            queryWrapper.eq("anonymity",index);
         queryWrapper.eq("user_id", userId);
         return getBaseMapper().selectPage(iPage, queryWrapper).getRecords();
     }
