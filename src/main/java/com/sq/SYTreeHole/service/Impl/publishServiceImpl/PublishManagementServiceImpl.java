@@ -115,7 +115,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
             throw new ManagementPublishException("空参异常");
         IPage<Publish> iPage = new Page<>(Long.parseLong(page), 10);
         QueryWrapper<Publish> queryWrapper = new QueryWrapper<>();
-        if(!index.equals("2"))
+        if(!index.equals("-1"))
             queryWrapper.eq("anonymity",index);
         queryWrapper.eq("user_id", userId);
         return getBaseMapper().selectPage(iPage, queryWrapper).getRecords();
