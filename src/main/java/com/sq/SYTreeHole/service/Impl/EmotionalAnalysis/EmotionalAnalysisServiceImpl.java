@@ -21,7 +21,7 @@ public class EmotionalAnalysisServiceImpl extends ServiceImpl<EmotionalAnalysisM
         Double result = getBaseMapper().lastMark(userId);
         if(Objects.isNull(result))
             return 0.0;
-        return result;
+        return result*100;
     }
 
     @Override
