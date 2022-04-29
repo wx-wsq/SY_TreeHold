@@ -106,10 +106,10 @@ public class Config {
         return new WebMvcConfigurer() {
             @Override
             public void addInterceptors(InterceptorRegistry registry) {
-//                registry
-//                        .addInterceptor(new JwtInterceptor())
-//                        .addPathPatterns("/**")
-//                        .excludePathPatterns("/loginForPass", "/loginForCode", "/register", "/code", "/resetPassword");
+                registry
+                        .addInterceptor(new JwtInterceptor())
+                        .addPathPatterns("/**")
+                        .excludePathPatterns("/loginForPass", "/loginForCode", "/register", "/code", "/resetPassword");
 //                        .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**", "/swagger-ui.html", "/csrf", "/");
                 registry.addInterceptor(new ErrorInterceptor())
                         .addPathPatterns("/**")
