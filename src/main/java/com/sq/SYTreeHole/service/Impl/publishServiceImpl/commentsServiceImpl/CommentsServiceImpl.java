@@ -17,6 +17,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.List;
@@ -29,6 +30,7 @@ public class CommentsServiceImpl extends ServiceImpl<CommentsMapper, Comment> im
 
     @Resource
     private PublishDetailMapper publishDetailMapper;
+
     @Cacheable(key = "#publishId+':'+#page")
     @Override
     public List<Comment> Comments(String publishId, String page) {
@@ -42,7 +44,7 @@ public class CommentsServiceImpl extends ServiceImpl<CommentsMapper, Comment> im
         return getBaseMapper().selectPage(iPage, queryWrapper).getRecords();
     }
 
-    @CacheEvict(beforeInvocation = true)
+    @CacheEvict(cacheNames = "comments", beforeInvocation = true, allEntries = true)
     @Override
     public boolean InsertComment(Comment comment) {
         if (Objects.isNull(comment)
@@ -52,27 +54,27 @@ public class CommentsServiceImpl extends ServiceImpl<CommentsMapper, Comment> im
             throw new CommentsException("空参异常");
         else {
             Publish publish = RedisUtils.getPublishCache(comment.getPublishId());
-            if(Objects.isNull(publish.getId()))
+            if (Objects.isNull(publish.getId()))
                 publish = publishDetailMapper.getById(comment.getPublishId());
-            publish.setCommentsNumber(publish.getCommentsNumber()+1);
+            publish.setCommentsNumber(publish.getCommentsNumber() + 1);
             RedisUtils.setPublishCache(publish);
             return save(comment);
         }
     }
 
-    @CacheEvict(beforeInvocation = true, allEntries = true)
+    @CacheEvict(cacheNames = "comments", beforeInvocation = true, allEntries = true)
     @Override
     public void deleteComment(String commentId, String userId) {
         if (getById(commentId).getUserId().equals(userId)) {
             Publish publish = RedisUtils.getPublishCache(userId);
-            publish.setCommentsNumber(publish.getCommentsNumber()-1);
+            publish.setCommentsNumber(publish.getCommentsNumber() - 1);
             RedisUtils.setPublishCache(publish);
             removeById(commentId);
         } else
             throw new PowerException("无权进行此操作");
     }
 
-    @CacheEvict
+    @CacheEvict(cacheNames = "comments", beforeInvocation = true, allEntries = true)
     @Override
     public void star(Serializable commentId, Integer IOrD) {
         Comment comment = getById(commentId);
