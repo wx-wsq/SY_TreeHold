@@ -13,7 +13,7 @@ public interface CommentsService {
      * @param page 页数默认一页10条
      * @return Comment实体列表
      */
-    List<Comment> Comments(Serializable publishId, Serializable page);
+    List<Comment> Comments(String publishId, String page);
 
 
     /**

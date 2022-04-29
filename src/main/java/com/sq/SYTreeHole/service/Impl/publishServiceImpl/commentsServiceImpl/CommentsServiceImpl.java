@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sq.SYTreeHole.Utils.RedisUtils;
+import com.sq.SYTreeHole.dao.publishDao.PublishDetailMapper;
 import com.sq.SYTreeHole.dao.publishDao.commentsDao.CommentsMapper;
 import com.sq.SYTreeHole.entity.Comment;
 import com.sq.SYTreeHole.entity.Publish;
@@ -16,7 +17,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-
+import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
@@ -26,17 +27,18 @@ import java.util.Objects;
 public class CommentsServiceImpl extends ServiceImpl<CommentsMapper, Comment> implements CommentsService {
     private static final int number = 10;
 
-
+    @Resource
+    private PublishDetailMapper publishDetailMapper;
     @Cacheable(key = "#publishId+':'+#page")
     @Override
-    public List<Comment> Comments(Serializable publishId, Serializable page) {
-        if (Strings.isBlank((String) publishId) || Strings.isBlank((String) page))
+    public List<Comment> Comments(String publishId, String page) {
+        if (Strings.isBlank(publishId) || Strings.isBlank(page))
             throw new CommentsException("空参异常");
         QueryWrapper<Comment> queryWrapper = new QueryWrapper<>();
         queryWrapper
                 .eq("publish_id", publishId)
                 .orderByDesc("id");
-        IPage<Comment> iPage = new Page<>(Long.parseLong((String) page), number);
+        IPage<Comment> iPage = new Page<>(Long.parseLong(page), number);
         return getBaseMapper().selectPage(iPage, queryWrapper).getRecords();
     }
 
@@ -50,6 +52,8 @@ public class CommentsServiceImpl extends ServiceImpl<CommentsMapper, Comment> im
             throw new CommentsException("空参异常");
         else {
             Publish publish = RedisUtils.getPublishCache(comment.getPublishId());
+            if(Objects.isNull(publish.getId()))
+                publish = publishDetailMapper.getById(comment.getPublishId());
             publish.setCommentsNumber(publish.getCommentsNumber()+1);
             RedisUtils.setPublishCache(publish);
             return save(comment);
