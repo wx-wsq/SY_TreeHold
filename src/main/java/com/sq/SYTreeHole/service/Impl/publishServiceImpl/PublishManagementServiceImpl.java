@@ -123,7 +123,8 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
         String[] keys = new String[]{"count","anonymity"};
         for (int i = 0; i < maps.size(); i++)
             map.put(keys[i],maps.get(i).get("result"));
-        map.put("count",(Long)map.get("anonymity")+(Long)map.get("count"));
+        map.putIfAbsent("anonymity",0L);
+        map.put("count", (Long)map.get("anonymity")+(Long)map.get("count"));
         return map;
     }
 
