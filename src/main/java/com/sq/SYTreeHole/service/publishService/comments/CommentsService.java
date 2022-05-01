@@ -18,18 +18,17 @@ public interface CommentsService {
 
     /**
      * 新增评论
-     * @param comments 评论实体
+     * @param comment 评论实体
      * @return 是否添加成功
      */
-    boolean InsertComment(Comment comments);
+    boolean InsertComment(Comment comment);
 
 
     /**
      * 删除评论
-     * @param commentId 评论ID
-     * @param id 用户ID 用以鉴别是否有权删除
+     * @param comment 评论实体
      */
-    void deleteComment(String commentId,String id);
+    void deleteComment(Comment comment);
 
 
     /**

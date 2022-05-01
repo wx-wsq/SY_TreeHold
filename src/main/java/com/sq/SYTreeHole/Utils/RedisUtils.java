@@ -3,14 +3,11 @@ package com.sq.SYTreeHole.Utils;
 import com.sq.SYTreeHole.entity.Publish;
 import com.sq.SYTreeHole.entity.PublishImages;
 import com.sq.SYTreeHole.entity.User;
-import lombok.Data;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
-
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -18,11 +15,9 @@ import java.util.Date;
 import java.util.List;
 
 @Component
-@Data
-@ConfigurationProperties(prefix = "my-redis-cache-config")
 public class RedisUtils {
 
-    private static boolean enable;
+    private final static boolean enable = true;
 
     public static boolean isEnable() {
         return enable;
@@ -43,7 +38,7 @@ public class RedisUtils {
     }
 
     public static void setPublishCache(Publish publish) {
-        if (!enable)
+        if (!isEnable())
             return;
         getRedisForHash().put("publish:" + publish.getId(), "id", publish.getId());
         getRedisForHash().put("publish:" + publish.getId(), "userId", publish.getUserId());
@@ -63,19 +58,19 @@ public class RedisUtils {
     }
 
     public static void setPublishListCache(List<Publish> publishListCacheOfAll) {
-        if (!enable)
+        if (!isEnable())
             return;
         publishListCacheOfAll.forEach(RedisUtils::setPublishCache);
     }
 
     public static void setPublishListCacheOfId(String type, String page, String index, Serializable ids) {
-        if (!enable)
+        if (!isEnable())
             return;
         getRedisForHash().put(type, page + ":" + index, ids);
     }
 
     public static Publish getPublishCache(Serializable id) {
-        if (!enable)
+        if (!isEnable())
             return new Publish();
         return new Publish(
                 (String) getRedisForHash().get("publish:" + id, "id"),
@@ -96,20 +91,20 @@ public class RedisUtils {
     }
 
     public static void clearAll() {
-        if (!enable)
+        if (!isEnable())
             return;
         redisTemplate.getRequiredConnectionFactory().getClusterConnection().flushAll();
     }
 
     public static void delPublishCache(Serializable publishId) {
-        if (!enable)
+        if (!isEnable())
             return;
         redisTemplate.delete("publish:" + publishId);
     }
 
     public static List<Publish> getPublishListCache(String type, Serializable page, Serializable index) {
         List<Publish> list = new ArrayList<>();
-        if (!enable)
+        if (!isEnable())
             return list;
         String hotString = ((String) getRedisForHash().get(type, page + ":" + index));
         if (Strings.isBlank(hotString))
@@ -122,19 +117,19 @@ public class RedisUtils {
     }
 
     public static void incrPublishVisits(Publish publish) {
-        if (!enable)
+        if (!isEnable())
             return;
         getRedisForHash().put("publish:" + publish.getId(), "visits", publish.getVisits() + 1);
     }
 
     public static void publishStar(Publish publish, Integer IOrD) {
-        if (!enable)
+        if (!isEnable())
             return;
         getRedisForHash().put("publish:" + publish.getId(), "star", publish.getStar() + IOrD);
     }
 
     public static void setPublishImagesCache(List<PublishImages> images) {
-        if (!enable)
+        if (!isEnable())
             return;
         if (images.size() > 0)
             getRedisForObject().set("imageForPublishId:" + images.get(0).getPublishId(), images);
@@ -142,13 +137,13 @@ public class RedisUtils {
 
     @SuppressWarnings("all")
     public static List<PublishImages> getPublishImageCache(String publishId) {
-        if (!enable)
+        if (!isEnable())
             return null;
         return (List<PublishImages>) getRedisForObject().get("imageForPublishId:" + publishId);
     }
 
     public static void delPublishImageCache(String publishId) {
-        if (!enable)
+        if (!isEnable())
             return;
         redisTemplate
                 .getRequiredConnectionFactory()

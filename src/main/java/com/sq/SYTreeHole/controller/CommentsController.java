@@ -37,8 +37,8 @@ public class CommentsController {
     }
 
     @PostMapping("/commentDel")
-    public Result<?> commentDel(String commentId, String userId) {
-        commentsService.deleteComment(commentId, userId);
+    public Result<?> commentDel(Comment comment) {
+        commentsService.deleteComment(comment);
         return new Result<>(Constants.CODE_200, "删除成功", null);
     }
 

@@ -25,7 +25,7 @@ public class SaveCache {
     @Resource
     private PublishDetailMapper publishDetailMapper;
 
-    @Scheduled(cron = "* */1 * * * *")
+    @Scheduled(cron = "0 0 */1 * * *")
     public void savePublishCacheToDataBase() {
         RedisClusterConnection clusterConnection = redisTemplate.getRequiredConnectionFactory().getClusterConnection();
         Map<String, JedisPool> clusterNodes = ((JedisCluster) clusterConnection.getNativeConnection()).getClusterNodes();
@@ -38,7 +38,7 @@ public class SaveCache {
                     Pattern pattern = Pattern.compile("^publish:");
                     Matcher matcher = pattern.matcher(key);
                     if (matcher.find()) {
-                        Publish publish = RedisUtils.getPublishCache(key.substring(key.length() - 1));
+                        Publish publish = RedisUtils.getPublishCache(key.substring(key.indexOf(":")+1));
                         publishDetailMapper.updateById(publish);
                     }
                 }

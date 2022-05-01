@@ -54,22 +54,36 @@ public class CommentsServiceImpl extends ServiceImpl<CommentsMapper, Comment> im
             throw new CommentsException("空参异常");
         else {
             Publish publish = RedisUtils.getPublishCache(comment.getPublishId());
-            if (Objects.isNull(publish.getId()))
+            if (Objects.isNull(publish.getId())) {
                 publish = publishDetailMapper.getById(comment.getPublishId());
-            publish.setCommentsNumber(publish.getCommentsNumber() + 1);
-            RedisUtils.setPublishCache(publish);
+                publish.setCommentsNumber(publish.getCommentsNumber() + 1);
+                publishDetailMapper.updateById(publish);
+
+            } else {
+                publish.setCommentsNumber(publish.getCommentsNumber() + 1);
+                RedisUtils.setPublishCache(publish);
+            }
             return save(comment);
         }
     }
 
     @CacheEvict(cacheNames = "comments", beforeInvocation = true, allEntries = true)
     @Override
-    public void deleteComment(String commentId, String userId) {
-        if (getById(commentId).getUserId().equals(userId)) {
-            Publish publish = RedisUtils.getPublishCache(userId);
+    public void deleteComment(Comment comment) {
+        if (getById(comment.getId()).getUserId().equals(comment.getUserId())) {
+            Publish publish = RedisUtils.getPublishCache(comment.getPublishId());
+            if (Objects.isNull(publish.getId())) {
+                publish = publishDetailMapper.getById(comment.getPublishId());
+                publish.setCommentsNumber(publish.getCommentsNumber() + 1);
+                publishDetailMapper.updateById(publish);
+
+            } else {
+                publish.setCommentsNumber(publish.getCommentsNumber() + 1);
+                RedisUtils.setPublishCache(publish);
+            }
             publish.setCommentsNumber(publish.getCommentsNumber() - 1);
             RedisUtils.setPublishCache(publish);
-            removeById(commentId);
+            removeById(comment);
         } else
             throw new PowerException("无权进行此操作");
     }

@@ -75,7 +75,7 @@ public class PublishDetailServiceImpl extends ServiceImpl<PublishDetailMapper, P
                 publish.setStar(0);
             }
             publish.setStar(publish.getStar() + IOrD);
-            if(RedisUtils.isEnable())
+            if(!RedisUtils.isEnable())
                 RedisUtils.setPublishCache(publish);
             else
                 updateById(publish);

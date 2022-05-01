@@ -24,8 +24,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.*;
 
 @Service
@@ -136,7 +134,8 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
         QueryWrapper<Publish> queryWrapper = new QueryWrapper<>();
         if(!index.equals("-1"))
             queryWrapper.eq("anonymity",index);
-        queryWrapper.eq("user_id", userId);
+        queryWrapper.eq("user_id", userId)
+                .orderByDesc("modify_time");
         return getBaseMapper().selectPage(iPage, queryWrapper).getRecords();
     }
 
@@ -175,15 +174,11 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
                 e.printStackTrace();
                 throw new RuntimeException("文件保存失败...");
             }
-            try {
-                publishImagesMapper.insert(
-                        new PublishImages()
-                                .setSaveName(file.getName())
-                                .setUrl("http://"+ InetAddress.getLocalHost().getHostAddress() +"/images/" + saveName)
-                                .setPublishId(publish.getId()));
-            } catch (UnknownHostException e) {
-                throw new RuntimeException(e);
-            }
+            publishImagesMapper.insert(
+                    new PublishImages()
+                            .setSaveName(file.getName())
+                            .setUrl("http://101.43.249.71/images/" + saveName)
+                            .setPublishId(publish.getId()));
         }
     }
 
