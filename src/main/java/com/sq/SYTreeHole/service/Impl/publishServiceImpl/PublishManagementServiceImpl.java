@@ -145,7 +145,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
         queryWrapper.eq("user_id", userId)
                     .orderByDesc("modify_time");
         List<Publish> records = getBaseMapper().selectPage(iPage, queryWrapper).getRecords();
-        List<Publish> collect = records.stream().map(RedisUtils::getPublishCache).collect(Collectors.toList());
+        List<Publish> collect = records.stream().map(v->RedisUtils.getPublishCache(v.getId())).collect(Collectors.toList());
         if(collect.size()<records.size()) {
             records.forEach(RedisUtils::setPublishCache);
             return records;
