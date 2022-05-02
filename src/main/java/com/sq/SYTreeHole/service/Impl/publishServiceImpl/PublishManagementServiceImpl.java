@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @SuppressWarnings("all")
@@ -49,6 +50,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
                 saveImages(images, publish);
             }
             RedisUtils.setPublishCache(publish);
+            RedisUtils.clearPublishListCacheOfId();
             return true;
         } else
             throw new ManagementPublishException("新增失败");
@@ -102,6 +104,7 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
             delImages(publishImages);
             RedisUtils.delPublishCache(publishId);
             RedisUtils.delPublishImageCache(publishId);
+            RedisUtils.clearPublishListCacheOfId();
             return true;
         } else
             return false;
@@ -135,8 +138,14 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
         if(!index.equals("-1"))
             queryWrapper.eq("anonymity",index);
         queryWrapper.eq("user_id", userId)
-                .orderByDesc("modify_time");
-        return getBaseMapper().selectPage(iPage, queryWrapper).getRecords();
+                    .orderByDesc("modify_time");
+        List<Publish> records = getBaseMapper().selectPage(iPage, queryWrapper).getRecords();
+        List<Publish> collect = records.stream().map(RedisUtils::getPublishCache).collect(Collectors.toList());
+        if(collect.size()<records.size()) {
+            records.forEach(RedisUtils::setPublishCache);
+            return records;
+        }else
+            return collect;
     }
 
     @Override

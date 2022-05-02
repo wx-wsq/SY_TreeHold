@@ -69,6 +69,13 @@ public class RedisUtils {
         getRedisForHash().put(type, page + ":" + index, ids);
     }
 
+    public static void clearPublishListCacheOfId(){
+        if(!isEnable())
+            return;
+        redisTemplate.delete("publishAll");
+        redisTemplate.delete("publishHot");
+    }
+
     public static Publish getPublishCache(Serializable id) {
         if (!isEnable())
             return new Publish();
