@@ -72,8 +72,8 @@ public class RedisUtils {
     public static void clearPublishListCacheOfId(){
         if(!isEnable())
             return;
-        redisTemplate.delete("publishAll");
-        redisTemplate.delete("publishHot");
+        redisTemplate.getRequiredConnectionFactory().getClusterConnection().del("publishAll".getBytes(StandardCharsets.UTF_8));
+        redisTemplate.getRequiredConnectionFactory().getClusterConnection().del("publishHot".getBytes(StandardCharsets.UTF_8));
     }
 
     public static Publish getPublishCache(Serializable id) {
@@ -106,7 +106,7 @@ public class RedisUtils {
     public static void delPublishCache(Serializable publishId) {
         if (!isEnable())
             return;
-        redisTemplate.delete("publish:" + publishId);
+        redisTemplate.getRequiredConnectionFactory().getClusterConnection().del(("publish:"+publishId).getBytes(StandardCharsets.UTF_8));
     }
 
     public static List<Publish> getPublishListCache(String type, Serializable page, Serializable index) {
