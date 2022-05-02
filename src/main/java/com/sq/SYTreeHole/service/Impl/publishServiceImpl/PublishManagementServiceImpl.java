@@ -16,6 +16,7 @@ import com.sq.SYTreeHole.exception.ManagementPublishException;
 import com.sq.SYTreeHole.service.publishService.PublishManagementService;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,7 +43,9 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
     public boolean insert(Publish publish, HttpServletRequest httpServletRequest) {
         if (Objects.isNull(publish) || Strings.isBlank(publish.getUserId()) || Strings.isBlank(publish.getText()))
             throw new ManagementPublishException("空参异常");
-        double mark = reckonMark(publish);
+        Publish publishMark = new Publish();
+        BeanUtils.copyProperties(publish,publishMark);
+        double mark = reckonMark(publishMark);
         publish.setMark(mark);
         if (save(publish)) {
             if (ServletFileUpload.isMultipartContent(httpServletRequest)) {
@@ -58,28 +61,30 @@ public class PublishManagementServiceImpl extends ServiceImpl<PublishManagementM
 
     @Transactional
     @Override
-    public boolean modify(Publish publish, HttpServletRequest httpServletRequest) {
-        if (Objects.isNull(publish) || Strings.isBlank(publish.getUserId()))
+    public boolean modify(Publish publishParam, HttpServletRequest httpServletRequest) {
+        if (Objects.isNull(publishParam) || Strings.isBlank(publishParam.getUserId()))
             throw new ManagementPublishException("空参异常");
         QueryWrapper<Publish> queryWrapper = new QueryWrapper<>();
         queryWrapper
-                .eq("id", publish.getId())
-                .eq("user_id", publish.getUserId());
+                .eq("id", publishParam.getId())
+                .eq("user_id", publishParam.getUserId());
         if (Objects.isNull(getOne(queryWrapper)))
             throw new ManagementPublishException("系统错误...");
+        Publish publish = new Publish();
+        BeanUtils.copyProperties(publishParam,publish);
         double mark = reckonMark(publish);
-        publish.setMark(mark);
-        if (updateById(publish)) {
-            RedisUtils.setPublishCache(publish);
-            RedisUtils.delPublishImageCache(publish.getId());
+        publishParam.setMark(mark);
+        if (updateById(publishParam)) {
+            RedisUtils.setPublishCache(publishParam);
+            RedisUtils.delPublishImageCache(publishParam.getId());
             if (ServletFileUpload.isMultipartContent(httpServletRequest)) {
                 QueryWrapper<PublishImages> publishImagesQueryWrapper = new QueryWrapper<>();
-                publishImagesQueryWrapper.eq("publish_id", publish.getId());
+                publishImagesQueryWrapper.eq("publish_id", publishParam.getId());
                 List<PublishImages> publishImages = publishImagesMapper.selectList(publishImagesQueryWrapper);
                 publishImagesMapper.deleteBatchIds(publishImages);
                 delImages(publishImages);
                 List<MultipartFile> multipartFiles = ((MultipartHttpServletRequest) httpServletRequest).getFiles("images");
-                saveImages(multipartFiles, publish);
+                saveImages(multipartFiles, publishParam);
             }
             return true;
         } else
