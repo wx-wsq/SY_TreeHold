@@ -22,6 +22,16 @@ public class NoticeController {
         return new Result<>(Constants.CODE_200,"请求成功",myNotices);
     }
 
+    /**
+     *
+     * @param notice 通知实体
+     * 需要的参数：
+     *               userId:点赞/评论的用户的id
+     *               publishId:当前动态的id
+     *               publishUserId:当前动态所属用户的id
+     *               index:0为点赞，1为评论
+     * @return 结果
+     */
     @PostMapping("setNotice")
     public Result<?> setNotice(Notice notice){
         noticeService.setMyNotice(notice);

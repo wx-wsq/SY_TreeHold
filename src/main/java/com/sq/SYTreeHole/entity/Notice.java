@@ -20,9 +20,11 @@ public class Notice implements Serializable {
     private String publishId;
     private String publishUserId;
     private Date createTime;
-    private Integer index;
+    private String text;
     @TableLogic
     private Integer isDelete;
+    @TableField(exist = false)
+    private Integer index;
     @TableField(exist = false)
     private User user;
     @TableField(exist = false)
