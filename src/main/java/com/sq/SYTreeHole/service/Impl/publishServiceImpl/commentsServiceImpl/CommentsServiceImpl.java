@@ -17,7 +17,6 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-
 import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.List;
@@ -52,19 +51,16 @@ public class CommentsServiceImpl extends ServiceImpl<CommentsMapper, Comment> im
                 || Strings.isBlank(comment.getUserId())
                 || Strings.isBlank(comment.getPublishId()))
             throw new CommentsException("空参异常");
-        else {
-            Publish publish = RedisUtils.getPublishCache(comment.getPublishId());
-            if (Objects.isNull(publish.getId())) {
-                publish = publishDetailMapper.getById(comment.getPublishId());
-                publish.setCommentsNumber(publish.getCommentsNumber() + 1);
-                publishDetailMapper.updateById(publish);
-
-            } else {
-                publish.setCommentsNumber(publish.getCommentsNumber() + 1);
-                RedisUtils.setPublishCache(publish);
-            }
-            return save(comment);
+        Publish publish = RedisUtils.getPublishCache(comment.getPublishId());
+        if (Objects.isNull(publish.getId())) {
+            publish = publishDetailMapper.getById(comment.getPublishId());
+            publish.setCommentsNumber(publish.getCommentsNumber() + 1);
+            publishDetailMapper.updateById(publish);
+        } else {
+            publish.setCommentsNumber(publish.getCommentsNumber() + 1);
+            RedisUtils.setPublishCache(publish);
         }
+        return save(comment);
     }
 
     @CacheEvict(cacheNames = "comments", beforeInvocation = true, allEntries = true)
