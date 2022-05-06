@@ -59,7 +59,7 @@ public class PublishManagementController {
         return new Result<>(Constants.CODE_200, "请求成功", map);
     }
 
-    @GetMapping("/publishGet")
+    @PostMapping("/publishGet")
     public Result<?> selectMy(String userId, String page, String index) {
         List<Publish> publishList = publishManagementService.selectMyPublish(userId, page, index);
         if (publishList.size() == 0)

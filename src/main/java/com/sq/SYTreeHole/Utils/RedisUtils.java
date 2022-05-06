@@ -118,7 +118,12 @@ public class RedisUtils {
             return list;
         String[] hots = hotString.split(",");
         for (String hot : hots) {
-            list.add(getPublishCache(hot));
+            Publish publishCache = getPublishCache(hot);
+            if(Strings.isBlank(publishCache.getId())) {
+                list.clear();
+                return list;
+            }
+            list.add(publishCache);
         }
         return list;
     }
