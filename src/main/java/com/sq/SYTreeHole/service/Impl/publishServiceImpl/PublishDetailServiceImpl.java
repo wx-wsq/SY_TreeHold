@@ -30,7 +30,7 @@ public class PublishDetailServiceImpl extends ServiceImpl<PublishDetailMapper, P
         if (Strings.isBlank(publishCache.getId())) {
             Publish publish = getBaseMapper().getById(publishId);
             if (Objects.isNull(publish)) {
-                RedisUtils.setPublishCache(new Publish().setId(publishId + ""));
+                RedisUtils.setPublishCache(new Publish().setId(publishId));
                 return null;
             }
             publish.setVisits(publish.getVisits() + 1);

@@ -39,7 +39,8 @@ public class SaveCache {
                     Matcher matcher = pattern.matcher(key);
                     if (matcher.find()) {
                         Publish publish = RedisUtils.getPublishCache(key.substring(key.indexOf(":")+1));
-                        publishDetailMapper.updateById(publish);
+                        if(publishDetailMapper.selectById(publish.getId()).getIsDelete()==0)
+                            publishDetailMapper.updateById(publish);
                     }
                 }
             }
